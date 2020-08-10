@@ -1,0 +1,12 @@
+/* pages/publish/publish.wxss */
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

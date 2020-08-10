@@ -1,0 +1,10 @@
+<!--pages/recommend/recommend.wxml-->
+<view class="row">
+<text>每日推荐</text>
+<button>扫码核销</button>
+</view>
+<button>玛莎拉蒂5000优惠券</button>
+<button>小米之家智能手环优惠券</button>
+<button>网易严选</button>
+<button>小鹏汽车</button>
+<mine0></mine0>

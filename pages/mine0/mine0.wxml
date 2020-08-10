@@ -1,0 +1,6 @@
+<!--pages/mine0.wxml-->
+<view class="row">
+<button>首页</button>
+<button>发起活动</button>
+<button>我的</button>
+</view>

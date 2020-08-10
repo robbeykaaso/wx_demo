@@ -1,0 +1,17 @@
+<!--pages/publish/publish.wxml-->
+<text>发布活动</text>
+<button>添加图片</button>
+<view class="row">
+<text>发起人</text>
+<input placeholder="发起人"></input>
+</view>
+<view class="row">
+<text>活动选项</text>
+<view class="col">
+<button>抽奖活动</button>
+<button>优惠券制作</button>
+</view>
+<button>可选项</button>
+</view>
+<textarea placeholder="活动信息"></textarea>
+<mine0></mine0>
