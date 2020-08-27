@@ -5,14 +5,26 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    activities: []
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    wx.request({
+      url: 'https://139.199.62.142:3000/',
+      data: {},
+      header:{
 
+      },
+      success: (res)=>{
+        this.setData(res.data)
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
   },
 
   /**

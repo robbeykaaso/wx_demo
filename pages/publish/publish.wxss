@@ -3,10 +3,55 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: 10vh;
 }
 
 .col {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 20vh;
+}
+
+.label{
+  color: orange;
+  background-color: transparent;
+}
+
+.view-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+}
+
+.title{
+  color: orange;
+}
+
+.image{
+  width: auto;
+  height: 20vh;
+  line-height: 20vh;
+  color: orange;
+}
+
+.master{
+  width: 50%;
+  text-align: center;
+  color: orange;
+}
+
+.input{
+  width: 50%;
+  text-align: center;
+  color: orange;
+}
+
+.row-activity {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 20vh;
 }

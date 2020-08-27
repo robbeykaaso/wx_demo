@@ -18,6 +18,20 @@ Component({
    * 组件的方法列表
    */
   methods: {
-
+    bindManagementTap: function() {
+      wx.redirectTo({
+        url: '../management/management'
+      })  
+    },
+    bindRecommendTap: function() {
+      wx.redirectTo({
+        url: '../recommend/recommend'
+      })
+    },
+    bindPublishTap: function() {
+      wx.redirectTo({
+        url: '../publish/publish'
+      })  
+    }
   }
 })

@@ -1,17 +1,20 @@
 <!--pages/publish/publish.wxml-->
-<text>发布活动</text>
-<button>添加图片</button>
+<view class="view-title">
+<text class="title">发布活动</text>
+</view>
+<button class="image">添加图片</button>
 <view class="row">
-<text>发起人</text>
-<input placeholder="发起人"></input>
+<text class="master">发起人</text>
+<input class="input" placeholder="发起人"></input>
 </view>
-<view class="row">
-<text>活动选项</text>
-<view class="col">
-<button>抽奖活动</button>
-<button>优惠券制作</button>
+<view class="row-activity">
+<text style="color:orange;width:30vh">活动选项</text>
+<scroll-view scroll-y="true" class="col">
+  <block wx:for="{{activities}}" wx:for-item="act">
+    <button class="label">{{act.text}}</button>
+  </block>
+</scroll-view>
+<button class="label" style="width:30vh">可选项</button>
 </view>
-<button>可选项</button>
-</view>
-<textarea placeholder="活动信息"></textarea>
+<textarea style="color:orange" placeholder="活动信息"></textarea>
 <mine0></mine0>

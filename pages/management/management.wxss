@@ -4,3 +4,29 @@
   flex-direction: row;
   align-items: center;
 }
+
+.title{
+  align-items: center;
+  padding-left: 40%;
+  color: orange;
+}
+
+.head-btn{
+  right: 0;
+  background-color: transparent;
+  color: orange;
+}
+
+.nav-btn{
+  color: orange;
+  background-color: transparent;
+}
+
+.body{
+  height: 65vh;
+}
+
+.label{
+  margin-top: 5px;
+  color: orange;
+}

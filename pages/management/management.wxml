@@ -1,14 +1,17 @@
 <!--pages/management/management.wxml-->
 <view class="row">
-<text>我的</text>
-<button>发起人入口</button>
+<text class="title">我的</text>
+<button class="head-btn">发起人入口</button>
 </view>
-<text>姓名头像</text>
+<text class="nav-btn">姓名头像</text>
 <view class="row">
-<button>已参加</button>
-<button>待使用</button>
-<button>关注</button>
+<button class="nav-btn">已参加</button>
+<button class="nav-btn">待使用</button>
+<button class="nav-btn">关注</button>
 </view>
-<button>卡包</button>
-<button>卡包</button>
+<scroll-view scroll-y="true" class="body">
+  <block wx:for="{{cards}}" wx:for-item="card">
+    <button class="label">{{card.text}}</button>
+  </block>
+</scroll-view>
 <mine0></mine0>

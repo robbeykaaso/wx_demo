@@ -1,6 +1,6 @@
 <!--pages/mine0.wxml-->
-<view class="row">
-<button>首页</button>
-<button>发起活动</button>
-<button>我的</button>
+<view class="row foot">
+<button class="foot-btn" bindtap="bindRecommendTap">首页</button>
+<button class="foot-btn" bindtap="bindPublishTap">发起活动</button>
+<button class="foot-btn" bindtap="bindManagementTap">我的</button>
 </view>

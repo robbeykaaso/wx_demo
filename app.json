@@ -1,10 +1,10 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/logs/logs",
+    "pages/recommend/recommend",
     "pages/management/management",
     "pages/publish/publish",
-    "pages/recommend/recommend"
+    "pages/index/index",
+    "pages/logs/logs"
   ],
   "window": {
     "backgroundTextStyle": "light",
