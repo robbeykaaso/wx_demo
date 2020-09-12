@@ -1,6 +1,14 @@
 const sql = require('mysql')
 
 const data_base = 'wx_test'
+
+const table_client = 'client'
+const table_enterprise = 'enterprise'
+const table_voucher = "voucher"
+const table_voucher_type = "voucher_type"
+const table_client_voucher = "client_voucher"
+const table_client_enterprise = "client_enterprise"
+
 const table_subscription = 'subscription'
 
 const db_config = {
@@ -36,19 +44,7 @@ let allServices = {
   deleteDB: (name)=>{
       let _sql = 'drop database if exists ' + name
       return allServices.query(_sql)
-  },
-  createTable: (name)=>{
-      let _sql = 'create table if not exists ' + name + ' (id int AUTO_INCREMENT, title VARCHAR(255), PRIMARY KEY(id))'
-      return allServices.query(_sql)
-  },
-  addSubscription: (obj) => {
-    let _sql = 'replace into ' + table_subscription + ' set title=?'
-    return allServices.query(_sql, obj)
-  },
-  findSubscription: function (obj) {
-    let _sql = 'select * from ' + table_subscription + ' where title=?'
-    return allServices.query(_sql, obj)
-},
+  }
 }
 
 var get_index = async (ctx, next) => {
@@ -101,17 +97,102 @@ async function initDB(){
             console.log ("connect db failed!")
             return
         }
-        allServices.createTable(table_subscription)
+        //let _sql = 'create table if not exists ' + table_subscription + ' (id int AUTO_INCREMENT, title VARCHAR(255), PRIMARY KEY(id))'
+        //allServices.query(_sql)
+
+        _sql = 'create table if not exists ' + table_client + ' (id bigint, PRIMARY KEY(id))'
+        allServices.query(_sql)
+
+        _sql = 'create table if not exists ' + table_enterprise + ' (id bigint, name VARCHAR(255), address VARCHAR(255), online tinyint(1), phone bigint(11), license_id bigint, license_img VARCHAR(255), leader_id bigint, leader_img VARCHAR(255), PRIMARY KEY(id))'
+        allServices.query(_sql)   
+        
+        _sql = 'create table if not exists ' + table_client_enterprise + ' (id bigint, client bigint, enterprise bigint, PRIMARY KEY(id))'
+        allServices.query(_sql)
+
+        _sql = 'create table if not exists ' + table_voucher_type + ' (id bigint, name VARCHAR(255), valid tinyint(1), PRIMARY KEY(id))'
+        allServices.query(_sql)
+
+        _sql = 'create table if not exists ' + table_voucher + ' (id bigint, voucher_type bigint, name VARCHAR(255), valid tinyint(1), start_time DATETIME, end_time DATETIME, verify_time DATETIME, home VARCHAR(255), PRIMARY KEY(id))'
+        allServices.query(_sql)
+
+        _sql = 'create table if not exists ' + table_client_voucher + ' (id bigint, client bigint, voucher bigint, PRIMARY KEY(id))'
+        allServices.query(_sql)
     })
     //await allServices.createTable('coupons')
 }
 initDB()
 
+var addClient = async (ctx, next) => {
+  let id = 12345
+
+  let _sql = 'select * from ' + table_client + ' where id=?'
+  let client = await allServices.query(_sql, id)
+  if (client.length > 0){
+    ctx.response.body = {state: false, msg: 'client exists'}
+  }else{
+    _sql = 'replace into ' + table_client + ' set id=?'
+    let ret = await allServices.query(_sql, id)
+    ctx.response.body = {state: true}
+  }
+}
+
+var addSubscription = async (ctx, next) => {
+
+}
+
+var getVoucherList = async (ctx, next) => {
+    //all, by subscription, by enterprise, by client
+}
+
+var getVoucherDetail = async (ctx, next) => {
+
+} 
+
+var addEnterprise = async (ctx, next) => {
+
+}
+
+var getVoucherTypeList = async (ctx, next) => {
+
+}
+
+var updateVoucherDetail = async (ctx, next) => {
+    
+}
+
+var publishVoucher = async (ctx, next) => {
+
+}
+
+var updateVouncherList = async (ctx, next) => {
+
+}
+
+var getVoucherQRCode = async (ctx, next) => {
+
+}
+
+var verifyVoucherQRCode = async (ctx, next) => {
+
+}
+
 let exp = {};
 exp['GET ' + '/'] = get_index
-exp['GET ' + '/find'] = findData
-exp['GET ' + '/publish'] = publish
-exp['GET ' + '/subscribe/:client'] = subscribe
-exp['GET ' + '/getAllSubscription/:client'] = getAllSubscription
-exp['GET ' + '/getAllPublishment/:client'] = getAllPublishment
+exp['GET ' + '/addClient'] = addClient
+exp['GET ' + '/addSubscription'] = addSubscription
+exp['GET ' + '/getVoucherList'] = getVoucherList
+exp['GET ' + '/getVoucherDetail'] = getVoucherDetail
+exp['GET ' + '/addEnterprise'] = addEnterprise
+exp['GET ' + '/getVoucherTypeList'] = getVoucherTypeList
+exp['GET ' + '/updateVoucherDetail'] = updateVoucherDetail
+exp['GET ' + '/publishVoucher'] = publishVoucher
+exp['GET ' + '/updateVoucherList'] = updateVouncherList
+exp['GET ' + '/getVoucherQRCode'] = getVoucherQRCode
+exp['GET ' + '/verifyVoucherQRCode'] = verifyVoucherQRCode
+
+//exp['GET ' + '/find'] = findData
+//exp['GET ' + '/publish'] = publish
+//exp['GET ' + '/subscribe/:client'] = subscribe
+//exp['GET ' + '/getAllSubscription/:client'] = getAllSubscription
+//exp['GET ' + '/getAllPublishment/:client'] = getAllPublishment
 module.exports = exp
