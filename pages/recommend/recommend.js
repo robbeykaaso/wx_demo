@@ -1,4 +1,5 @@
 // pages/recommend/recommend.js
+const app = getApp()
 Page({
 
   /**
@@ -11,20 +12,55 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  updateVoucherList: function(){
     wx.request({
-      url: 'https://139.199.62.142:3000/',
-      data: {},
+      url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+      data: {"client": app.globalData.openid},
       header:{
-
+        "Content-type": "application/json"
       },
       success: (res)=>{
-        this.setData(res.data)
+        this.setData({"activities": res.data})
+
+        wx.request({
+          url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+          data: {},
+          header:{
+    
+          },
+          success: (res)=>{
+            var cnt = this.data.activities.length
+            for (var i in res.data){
+              var tmp = "activities[" + cnt + "]"
+              this.setData({[tmp]: res.data[i]})
+              cnt++
+            }
+          },
+          fail: function(err){
+            console.log("fail")
+          }
+        })
+            //var tmp = "activities[1]"
+            //this.setData({[tmp]: {"name": "world"}})
+        //console.log(app.globalData.openid)
+        //var tmp = "activities[1]"
+        //this.setData({[tmp]: {"name": "world"}})
       },
       fail: function(err){
         console.log("fail")
       }
     })
+  },
+  getUnionID: function(aRes){
+
+  },
+  onLoad: function (options) {
+    if (!app.globalData.openid){
+      app.userIDReadyCallback = res => {
+        this.updateVoucherList()
+      }
+    }else
+      this.updateVoucherList()
   },
 
   /**

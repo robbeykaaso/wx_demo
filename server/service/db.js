@@ -9,8 +9,6 @@ const table_voucher_type = "voucher_type"
 const table_client_voucher = "client_voucher"
 const table_client_enterprise = "client_enterprise"
 
-const table_subscription = 'subscription'
-
 const db_config = {
   host: '0.0.0.0',
   user: 'root',
@@ -130,6 +128,10 @@ var addSubscription = async (ctx, next) => {
 
 var getVoucherList = async (ctx, next) => {
     //all, by subscription, by enterprise, by client
+    let dt = ctx.request.query
+    _sql = 'select * from ' + table_voucher
+    let voucher = await allServices.query(_sql)
+    ctx.response.body = voucher
 }
 
 var getVoucherDetail = async (ctx, next) => {
@@ -165,7 +167,9 @@ var addEnterprise = async (ctx, next) => {
 }
 
 var getVoucherTypeList = async (ctx, next) => {
-
+  let _sql = 'select * from ' + table_voucher_type
+  let ret = await allServices.query(_sql)
+  ctx.response.body = ret
 }
 
 var updateVoucherDetail = async (ctx, next) => {
@@ -202,7 +206,6 @@ var updateVoucherDetail = async (ctx, next) => {
   
 }
 
-//overwrite problem
 var updateVoucherList = async (ctx, next) => {
   let client = 12345
   let voucher = 1

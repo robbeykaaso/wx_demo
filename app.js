@@ -10,6 +10,23 @@ App({
     wx.login({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
+        var code = res.code; //返回code
+        var appId = 'wxb0bf61c63eeaa9a1';
+        var secret = '0da61b73a552059a47fe852f7c7e29f5';
+        wx.request({
+          url: 'https://api.weixin.qq.com/sns/jscode2session?appid=' + appId + '&secret=' + secret + '&js_code=' + code + '&grant_type=authorization_code',
+          data: {},
+          header: {
+            'content-type': 'json'
+          },
+          success: res => {
+            var openid = res.data.openid //返回openid
+            this.globalData.openid = openid
+            if (this.userIDReadyCallback)
+              this.userIDReadyCallback()
+            //console.log('openid为' + openid);
+          }
+        })
       }
     })
     // 获取用户信息
@@ -21,7 +38,6 @@ App({
             success: res => {
               // 可以将 res 发送给后台解码出 unionId
               this.globalData.userInfo = res.userInfo
-
               // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
               // 所以此处加入 callback 以防止这种情况
               if (this.userInfoReadyCallback) {
