@@ -27,7 +27,7 @@
 }
 
 .title{
-  color: orange;
+  color: rgb(38, 0, 255);
 }
 
 .image{

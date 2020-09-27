@@ -1,4 +1,6 @@
 // pages/publish/publish.js
+const app = getApp()
+
 Page({
 
   /**
@@ -16,6 +18,34 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
+
+  bindPublishTap: function() {
+    wx.request({
+      url: 'http://127.0.0.1:3000/updateVoucherDetail',
+      data: {
+        "count": 10,
+        "voucher_type": 1,
+        "voucher_name": "world",
+        "name": "action1",
+        "valid": 0,
+        "start_time": "2006-07-02 08:09:04",
+        "end_time": "2006-09-02 08:09:04",
+        "home": "hello2",
+        "publisher": app.globalData.openid,
+        "message": "lalala"
+      },
+      header:{
+        "Content-type": "application/json"
+      },
+      success: (res)=>{
+       
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
+  },
+
   onLoad: function (options) {
 
   },

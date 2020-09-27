@@ -1,11 +1,11 @@
 <!--pages/publish/publish.wxml-->
 <view class="view-title">
-<text class="title">发布活动</text>
+<button class="title" bindtap="bindPublishTap">发布</button>
 </view>
 <button class="image">添加图片</button>
 <view class="row">
-<text class="master">发起人</text>
-<input class="input" placeholder="发起人"></input>
+<text class="master">数量</text>
+<input class="input" placeholder="数量"></input>
 </view>
 <view class="row-activity">
 <text style="color:orange;width:30vh">活动选项</text>

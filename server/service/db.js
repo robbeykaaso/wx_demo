@@ -75,22 +75,22 @@ async function initDB(){
         //let _sql = 'create table if not exists ' + table_subscription + ' (id int AUTO_INCREMENT, title VARCHAR(255), PRIMARY KEY(id))'
         //allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_client + ' (id bigint, PRIMARY KEY(id))'
+        let _sql = 'create table if not exists ' + table_client + ' (id varchar(255), PRIMARY KEY(id))'
         allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_enterprise + ' (id bigint, name VARCHAR(255), address VARCHAR(255), online tinyint(1), phone bigint(11), license_id bigint, license_img VARCHAR(255), leader_id bigint, leader_img VARCHAR(255), PRIMARY KEY(id))'
+        _sql = 'create table if not exists ' + table_enterprise + ' (id varchar(255), name VARCHAR(255), address VARCHAR(255), online tinyint(1), phone bigint(11), license_id bigint, license_img VARCHAR(255), leader_id bigint, leader_img VARCHAR(255), PRIMARY KEY(id))'
         allServices.query(_sql)   
         
-        _sql = 'create table if not exists ' + table_client_enterprise + ' (id bigint auto_increment not null, client bigint, enterprise bigint, PRIMARY KEY(id))'
+        _sql = 'create table if not exists ' + table_client_enterprise + ' (id bigint auto_increment not null, client varchar(255), enterprise varchar(255), PRIMARY KEY(id))'
         allServices.query(_sql)
 
         _sql = 'create table if not exists ' + table_voucher_type + ' (id bigint, name VARCHAR(255), valid tinyint(1), PRIMARY KEY(id))'
         allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_voucher + ' (id bigint auto_increment not null unique, count int, voucher_type bigint, name varchar(255), valid tinyint(1), start_time datetime, end_time datetime, home varchar(255), primary key(id))'
+        _sql = 'create table if not exists ' + table_voucher + ' (id bigint auto_increment not null unique, count int, voucher_type bigint, name varchar(255), valid tinyint(1), start_time datetime, end_time datetime, home varchar(255), publisher varchar(255), message varchar(255), primary key(id))'
         allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_client_voucher + ' (id bigint auto_increment not null, client bigint, voucher bigint, verify_time datetime, PRIMARY KEY(id))'
+        _sql = 'create table if not exists ' + table_client_voucher + ' (id bigint auto_increment not null, client varchar(255), voucher bigint, verify_time datetime, PRIMARY KEY(id))'
         allServices.query(_sql)
     })
     //await allServices.createTable('coupons')
@@ -129,14 +129,40 @@ var addSubscription = async (ctx, next) => {
 var getVoucherList = async (ctx, next) => {
     //all, by subscription, by enterprise, by client
     let dt = ctx.request.query
-    _sql = 'select * from ' + table_voucher
-    let voucher = await allServices.query(_sql)
-    ctx.response.body = voucher
+    if (dt["client_subscription"]){
+      let _sql = 'select * from ' + table_client_enterprise + ' where client=?'
+      let lst = await allServices.query(_sql, dt["client_subscription"])
+      let ret = []
+      for (let i in lst){
+        _sql = 'select * from ' + table_voucher + ' where publisher=?'
+        let dt = await allServices.query(_sql, lst[i]["enterprise"])
+        for (let k in dt)
+          ret.push(dt[k])
+      }
+      ctx.response.body = ret
+    } else if (dt["client_own"]){
+      let _sql = 'select * from ' + table_client_voucher + ' where client=?'
+      let lst = await allServices.query(_sql, dt["client_own"])
+      let ret = []
+      for (let i in lst){
+        _sql = 'select * from ' + table_voucher + ' where id=?'
+        let dt = await allServices.query(_sql, lst[i]["voucher"])
+        ret.push(dt[0])
+      }
+      ctx.response.body = ret
+    }
+    else{
+      let _sql = 'select * from ' + table_voucher
+      let voucher = await allServices.query(_sql)
+      ctx.response.body = voucher
+    }
 }
 
 var getVoucherDetail = async (ctx, next) => {
-  let id = 1
-  _sql = 'select * from ' + table_voucher + ' where id=?'
+  let dt = ctx.request.query
+
+  let id = dt["id"] == undefined ? - 1 : dt["id"]
+  let _sql = 'select * from ' + table_voucher + ' where id=?'
   let voucher = await allServices.query(_sql, id)
   if (voucher.length > 0){
     ctx.response.body = voucher[0]
@@ -173,15 +199,19 @@ var getVoucherTypeList = async (ctx, next) => {
 }
 
 var updateVoucherDetail = async (ctx, next) => {
-  let id = 1
-  let count = 10
-  let voucher_type = 1
-  let voucher_name = "hello"
-  let name = "hello"
-  let valid = 0
-  let start_time = "2006-07-02 08:09:04"
-  let end_time = "2006-09-02 08:09:04"
-  let home = "hello2"
+  let dt = ctx.request.query
+
+  let id = dt["id"] == undefined ? - 1 : dt["id"]
+  let count = dt["count"]
+  let voucher_type = dt["voucher_type"]
+  let voucher_name = dt["voucher_name"]
+  let name = dt["name"]
+  let valid = dt["valid"]
+  let start_time = dt["start_time"]
+  let end_time = dt["end_time"]
+  let home = dt["home"]
+  let publisher = dt["publisher"]
+  let message = dt["message"]
 
   //insert voucher type
   let _sql = 'select * from ' + table_voucher_type + ' where id=?'
@@ -195,21 +225,23 @@ var updateVoucherDetail = async (ctx, next) => {
   _sql = 'select * from ' + table_voucher + ' where id=?'
   let voucher = await allServices.query(_sql, id)
   if (voucher.length > 0){
-    _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?'
-    let ret = await allServices.query(_sql, [id, count, voucher_type, name, valid, start_time, end_time, home])
+    _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?, publisher=?, message=?'
+    let ret = await allServices.query(_sql, [id, count, voucher_type, name, valid, start_time, end_time, home, publisher, message])
     ctx.response.body = {state: true}
   }else{
-    _sql = 'insert into ' + table_voucher + ' set count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?'
-    let ret = await allServices.query(_sql, [count, voucher_type, name, valid, start_time, end_time, home])
+    _sql = 'insert into ' + table_voucher + ' set count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?, publisher=?, message=?'
+    let ret = await allServices.query(_sql, [count, voucher_type, name, valid, start_time, end_time, home, publisher, message])
     ctx.response.body = {state: true}
   }
   
 }
 
 var updateVoucherList = async (ctx, next) => {
-  let client = 12345
-  let voucher = 1
-  let verify_time = null
+  let dt = ctx.request.query
+
+  let client = dt["client"]
+  let voucher = dt["voucher"]
+  let verify_time = dt["verify_time"]
 
   let _sql = 'select * from ' + table_client_voucher + ' where client=? and voucher=?'
   let receive = await allServices.query(_sql, [client, voucher])

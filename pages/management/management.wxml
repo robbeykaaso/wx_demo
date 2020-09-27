@@ -11,7 +11,16 @@
 </view>
 <scroll-view scroll-y="true" class="body">
   <block wx:for="{{cards}}" wx:for-item="card">
-    <button class="label">{{card.text}}</button>
+    <button class="label" bindtap="bindDetailTap" data-index="{{index}}">{{card.name}}</button>
   </block>
 </scroll-view>
+
+<view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+<view class="modalDlg" wx:if="{{showModal}}">
+    <text>{{voucher_detail.name}}</text>
+    <text>{{voucher_detail.message}}</text>
+    <button wx:if="{{voucher_detail.verify_time}}" bindtap="close">已使用</button>
+    <button wx:else bindtap="use">使用</button>
+</view>
+
 <mine0></mine0>
