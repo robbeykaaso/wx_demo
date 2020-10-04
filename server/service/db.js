@@ -170,25 +170,63 @@ var getVoucherDetail = async (ctx, next) => {
     ctx.response.body = {state: false, msg: 'no this voucher'}
 } 
 
+var getEnterpriseDetail = async (ctx, next) => {
+  let dt = ctx.request.query
+  
+  let id = dt["id"] == undefined ? "" : dt["id"]
+  let _sql = 'select * from ' + table_enterprise + ' where id=?'
+  let enterprise = await allServices.query(_sql, id)
+  if (enterprise.length > 0){
+    ctx.response.body = enterprise[0]
+  }else
+    ctx.response.body = {err: 1, msg: 'no this enterprise'}
+}
+
 var addEnterprise = async (ctx, next) => {
-  let id = 12345
-  let name = "hello"
-  let address = "hello@sina.com"
+  let dt = ctx.request.query
+
+  let id = dt["id"]
+  if (id == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid enterprise'}
+    return
+  }
+  let name = dt["name"]
+  if (name == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid name'}
+    return
+  }
+  let address = dt["address"]
+  if (address == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid address'}
+    return
+  }
   let online = 0
-  let phone = 12345678910
-  let license_id = 12121212
+  let phone = dt["phone"]
+  if (phone == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid phone'}
+    return
+  }
+  let license_id = dt["license_id"]
+  if (license_id == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid license'}
+    return
+  }
   let license_img = "hello"
-  let leader_id = 21212121
+  let leader_id = dt["leader_id"]
+  if (leader_id == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid leader'}
+    return
+  }
   let leader_img = "hello"
 
   let _sql = 'select * from ' + table_enterprise + ' where id=?'
   let enterprise = await allServices.query(_sql, id)
   if (enterprise.length > 0){
-    ctx.response.body = {state: false, msg: 'enterprise exists'}
+    ctx.response.body = {err: 1, msg: 'enterprise exists'}
   }else{
     _sql = 'insert into ' + table_enterprise + ' set id=?, name=?, address=?, online=?, phone=?, license_id=?, license_img=?, leader_id=?, leader_img=?'
     let ret = await allServices.query(_sql, [id, name, address, online, phone, license_id, license_img, leader_id, leader_img])
-    ctx.response.body = {state: true}
+    ctx.response.body = {err: 0}
   }
 }
 
@@ -269,6 +307,7 @@ exp['GET ' + '/addClient'] = addClient
 exp['GET ' + '/addSubscription'] = addSubscription
 exp['GET ' + '/getVoucherList'] = getVoucherList
 exp['GET ' + '/getVoucherDetail'] = getVoucherDetail
+exp['GET ' + '/getEnterpriseDetail'] = getEnterpriseDetail
 exp['GET ' + '/addEnterprise'] = addEnterprise
 exp['GET ' + '/getVoucherTypeList'] = getVoucherTypeList
 exp['GET ' + '/updateVoucherDetail'] = updateVoucherDetail
