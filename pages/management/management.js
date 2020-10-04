@@ -8,25 +8,20 @@ Page({
    */
   data: {
     currentTab: 0,
-    cards: [
+    voucher_own: [
     ],
     voucher_detail: {
       name: "world",
       message: "hello",
       verify_time: null
     },
-    enterprise_detail: {
-      name: "hello",
-      address: "hello@sina.com",
-      phone: 123456789,
-      license_id: 12121212,
-      license_img: "hello.png",
-      leader_id: 21212121,
-      leader_img: "hello"
-    },
+    enterprises: {},
+    voucher_publish: [],
+    enterprise_detail: {},
     isEnterprise: false,
     showVoucherDetail: false,
-    showEnterpriseDetail: false
+    showEnterpriseDetail: false,
+    qrImage: "http://127.0.0.1:3000/getVoucherQRCode"
   },
 
   /**
@@ -38,6 +33,34 @@ Page({
      currentTab: e.detail.current
     });
    },
+   updateEnterprises: function(){
+    wx.request({
+      url: 'http://127.0.0.1:3000/getSubscribedEnterprises',//'https://139.199.62.142:3000/',
+      data: {"client": app.globalData.openid},
+      header:{
+        "Content-type": "application/json"
+      },
+      success: (res)=>{
+        this.setData({enterprises: res.data})
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
+   },
+   unsubscribeEnterprise: function(e){
+    wx.request({
+      url: 'http://127.0.0.1:3000/addSubscription',
+      data: {enterprise: e.currentTarget.dataset.index,
+             del: true},
+      success: (res)=>{
+        this.updateEnterprises()
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
+   },
    //点击切换
    clickTab: function (e) {
     var that = this;
@@ -47,25 +70,43 @@ Page({
      that.setData({
       currentTab: e.target.dataset.current
      })
+     if (e.target.dataset.current == 1){
+       this.updateEnterprises()
+     }else if (e.target.dataset.current == 2){
+      wx.request({
+        url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+        data: {"client_publish": app.globalData.openid},
+        header:{
+          "Content-type": "application/json"
+        },
+        success: (res)=>{
+          this.setData({voucher_publish: res.data})
+        },
+        fail: function(err){
+          console.log("fail")
+        }
+      })
+     }
+
     }
    },
-
-  use: function(){
-    this.setData({showVoucherDetail: false})
-  },
   register: function(){
+    var dt = {id: app.globalData.openid, 
+      name: "hello",
+      address: "hello@sina.com",
+      phone: 123456789,
+      license_id: 1212121212,
+      leader_id: 2121212121}
     wx.request({
       url: 'http://127.0.0.1:3000/addEnterprise',//'https://139.199.62.142:3000/',
-      data: {id: app.globalData.openid, 
-             name: "hello",
-             address: "hello@sina.com",
-             phone: 123456789,
-             license_id: 1212121212,
-             leader_id: 2121212121},
+      data: dt,
       header:{
 
       },
       success: (res)=>{
+        app.globalData.isEnterprise = true
+        app.globalData.enterprise_detail = dt
+        this.onLoad()
         this.bindEnterpriseDetailTap()     
       },
       fail: function(err){
@@ -77,34 +118,15 @@ Page({
     this.setData({showVoucherDetail: false, showEnterpriseDetail: false})
   },
   bindEnterpriseDetailTap: function(e){
-    wx.request({
-      url: 'http://127.0.0.1:3000/getEnterpriseDetail',//'https://139.199.62.142:3000/',
-      data: {"id": app.globalData.openid},
-      header:{
-
-      },
-      success: (res)=>{
-        var detail = res.data
-        for (var i in app.globalData.voucher_own)
-          if (app.globalData.voucher_own[i].id == detail.id){
-            detail["own"] = true
-            break
-          }
-        if (res.data["err"])
-          this.setData({enterprise_detail: {}, isEnterprise: false})  
-        else
-          this.setData({enterprise_detail: res.data, isEnterprise: true})   
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
     this.setData({showEnterpriseDetail: true})
+  },
+  bindVoucherPublishTap:  function(e){
+
   },
   bindVoucherDetailTap: function(e){
     wx.request({
       url: 'http://127.0.0.1:3000/getVoucherDetail',//'https://139.199.62.142:3000/',
-      data: {"id": this.data.cards[e.currentTarget.dataset.index].id},
+      data: {"id": this.data.voucher_own[e.currentTarget.dataset.index].id},
       header:{
 
       },
@@ -116,7 +138,7 @@ Page({
             break
           }
         this.setData({voucher_detail: res.data})
-        this.setData({showVoucherDetail: true})
+        this.setData({showVoucherDetail: true, qrImage: "http://127.0.0.1:3000/getVoucherQRCode?id=" + res.data.id})
       },
       fail: function(err){
         console.log("fail")
@@ -125,7 +147,9 @@ Page({
     
   },
   onLoad: function (options) {
-    this.setData({"cards": app.globalData.voucher_own})
+    this.setData({isEnterprise: app.globalData.isEnterprise,
+    enterprise_detail: app.globalData.enterprise_detail,
+    voucher_own: app.globalData.voucher_own})
   },
 
   /**

@@ -76,6 +76,11 @@
   color:#F65959;
   border-bottom: 4rpx solid #F65959;
 }
+.model-title{
+  right: -40%;
+  color: rgb(136, 132, 133);
+}
+
 swiper{
  text-align: center;
 }

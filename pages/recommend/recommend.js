@@ -12,7 +12,9 @@ Page({
       message: "hello",
       own: 1
     },
-    showModal: false
+    showVoucherDetail: false,
+    showReqResult: false,
+    reqMessage: ""
   },
 
   /**
@@ -28,16 +30,49 @@ Page({
 
       },
       success: (res)=>{
-        this.setData({"voucher_detail.own": true})
-        app.globalData.voucher_own.push(this.data.voucher_detail)
+        if (res.data["err"]){
+          this.setData({showReqResult: true, reqMessage: res.data.msg})
+        }else{
+          this.setData({"voucher_detail.own": true})
+          app.globalData.voucher_own.push(this.data.voucher_detail)
+        }
       },
       fail: function(err){
         console.log("fail")
       }
     })
   },
+  getScancode: function(){
+    wx.scanCode({
+      success: (res) => {
+        wx.request({
+          url: "http://" + res.result,
+          data: {client: app.globalData.openid},
+          success: (res)=>{
+            this.setData({showReqResult: true, reqMessage: res.data.msg})
+          },
+          fail: function(err){
+            console.log("fail")
+          }
+        })
+      }
+    })
+  },
   close: function(){
-    this.setData({showModal: false})
+    this.setData({showVoucherDetail: false, showReqResult: false})
+  },
+  subscribeEnterprise: function(){
+    wx.request({
+      url: 'http://127.0.0.1:3000/addSubscription',
+      data: {client: app.globalData.openid,
+            enterprise: this.data.voucher_detail.publisher},
+      success: (res)=>{
+
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
   },
   bindDetailTap: function(e){
     wx.request({
@@ -53,8 +88,22 @@ Page({
             detail["own"] = true
             break
           }
-        this.setData({voucher_detail: res.data})
-        this.setData({showModal: true})
+        this.setData({voucher_detail: detail})
+
+        wx.request({
+          url: 'http://127.0.0.1:3000/getEnterpriseDetail',//'https://139.199.62.142:3000/',
+          data: {"id": res.data["publisher"]},
+          header:{
+    
+          },
+          success: (res)=>{
+            detail["publishername"] = res.data["name"]
+            this.setData({showVoucherDetail: true, voucher_detail: detail})
+          },
+          fail: function(err){
+            console.log("fail")
+          }
+        })
       },
       fail: function(err){
         console.log("fail")
@@ -63,9 +112,29 @@ Page({
     
   },
   updateVoucherList: function(){
+    //get user detail
+    wx.request({
+      url: 'http://127.0.0.1:3000/getEnterpriseDetail',//'https://139.199.62.142:3000/',
+      data: {id: app.globalData.openid},
+      header:{
+
+      },
+      success: (res)=>{
+        if (res.data["err"])
+          app.globalData.isEnterprise = false
+        else{
+          app.globalData.isEnterprise = true
+          app.globalData.enterprise_detail = res.data
+        }   
+      },
+      fail: function(err){
+        app.globalData.isEnterprise = false
+      }
+    })
+    //get voucherlist recommended
     wx.request({
       url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
-      data: {"client_subscription": app.globalData.openid},
+      data: {client_subscription: app.globalData.openid},
       header:{
         "Content-type": "application/json"
       },
@@ -74,17 +143,18 @@ Page({
 
         wx.request({
           url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
-          data: {},
+          data: {client: app.globalData.openid},
           header:{
     
           },
           success: (res)=>{
             var cnt = this.data.activities.length
-            for (var i in res.data){
-              var tmp = "activities[" + cnt + "]"
-              this.setData({[tmp]: res.data[i]})
-              cnt++
-            }
+            for (var i in res.data)
+              if (res.data[i].valid){
+                var tmp = "activities[" + cnt + "]"
+                this.setData({[tmp]: res.data[i]})
+                cnt++
+              }
           },
           fail: function(err){
             console.log("fail")
@@ -100,7 +170,7 @@ Page({
         console.log("fail")
       }
     })
-
+    //get voucherlist owned
     wx.request({
       url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
       data: {"client_own": app.globalData.openid},
