@@ -175,6 +175,7 @@ var getVoucherList = async (ctx, next) => {
       for (let i in lst){
         _sql = 'select * from ' + table_voucher + ' where id=?'
         let dt = await allServices.query(_sql, lst[i]["voucher"])
+        dt[0]["verify_time"] = lst[i]["verify_time"]
         ret.push(dt[0])
       }
       ctx.response.body = ret
@@ -387,10 +388,14 @@ var verifyVoucherQRCode = async (ctx, next) => {
   let _sql = 'select * from ' + table_client_voucher + ' where client=? and voucher=?'
   let receive = await allServices.query(_sql, [client, voucher_id])
   if (receive.length > 0){
-    let verify_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
-    _sql = 'replace into ' + table_client_voucher + ' set id=?, client=?, voucher=?, verify_time=?'
-    let ret = await allServices.query(_sql, [receive[0]['id'], client, voucher_id, verify_time])
-    ctx.response.body = {err: 0, msg: "success"}
+    if (receive[0]["verify_time"]){
+      ctx.response.body = {err: 1, msg: "已核销"}
+    }else{
+      let verify_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+      _sql = 'replace into ' + table_client_voucher + ' set id=?, client=?, voucher=?, verify_time=?'
+      let ret = await allServices.query(_sql, [receive[0]['id'], client, voucher_id, verify_time])
+      ctx.response.body = {err: 0, msg: "核销成功"}
+    }
   }else
     ctx.response.body = {err: 1, msg: "no this voucher"}
 

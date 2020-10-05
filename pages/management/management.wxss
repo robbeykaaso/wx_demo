@@ -81,6 +81,12 @@
   color: rgb(136, 132, 133);
 }
 
+.voucher-status{
+  width: 40vw;
+  text-align: center;
+  color: orange;
+}
+
 swiper{
  text-align: center;
 }

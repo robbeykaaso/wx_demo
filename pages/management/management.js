@@ -70,7 +70,22 @@ Page({
      that.setData({
       currentTab: e.target.dataset.current
      })
-     if (e.target.dataset.current == 1){
+     if (e.target.dataset.current == 0){
+      /*wx.request({
+        url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+        data: {"client_own": app.globalData.openid},
+        header:{
+          "Content-type": "application/json"
+        },
+        success: (res)=>{
+          app.globalData.voucher_own = res.data
+          this.setData({voucher_own: res.data})
+        },
+        fail: function(err){
+          console.log("fail")
+        }
+      })*/
+     }else if (e.target.dataset.current == 1){
        this.updateEnterprises()
      }else if (e.target.dataset.current == 2){
       wx.request({

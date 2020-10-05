@@ -2,13 +2,21 @@
 <view class="view-title">
 <button class="title" bindtap="bindPublishTap">发布</button>
 </view>
+<view class="row">
+  <text class="master">标题</text>
+  <input value="{{voucher_title}}" bindinput="editTitle" placeholder="标题"></input>
+</view>
 <button class="image">添加图片</button>
 <view class="row">
 <text class="master">数量</text>
-<input class="input" placeholder="数量"></input>
+<view class="number-group">
+  <button class="number-cell" bindtap="descrease">-</button>
+  <input class="number-cell" type="number" min="1" value="{{voucher_count}}" bindinput="editCount" placeholder="数量"></input>
+  <button class="number-cell" bindtap="increase">+</button>
+</view>
 </view>
 <view class="row-activity">
-<text style="color:orange;width:30vh">活动选项</text>
+<text style="color:orange;width:30vh">活动类型</text>
 <scroll-view scroll-y="true" class="col">
   <block wx:for="{{activities}}" wx:for-item="act">
     <button class="label">{{act.text}}</button>
@@ -16,5 +24,5 @@
 </scroll-view>
 <button class="label" style="width:30vh">可选项</button>
 </view>
-<textarea style="color:orange" placeholder="活动信息"></textarea>
+<textarea style="height:20vh" bindinput="editMessage" placeholder="活动信息" value="{{message}}"></textarea>
 <mine0></mine0>

@@ -11,16 +11,19 @@
   <view class="swiper-tab-item {{currentTab==2?'active':''}}" data-current="2" bindtap="clickTab">已发布</view>
 </view>
  
-<swiper current="{{currentTab}}" duration="300" bindchange="swiperTab">
+<swiper style="height:70vh" current="{{currentTab}}" duration="300" bindchange="swiperTab">
   <swiper-item >
-    <scroll-view scroll-y="true" class="body">
-      <block wx:for="{{voucher_own}}" wx:for-item="card">
-        <button class="label" bindtap="bindVoucherDetailTap" data-index="{{index}}">{{card.name}}</button>
+    <scroll-view scroll-y="true">
+      <block wx:for="{{voucher_own}}" wx:for-item="voucher">
+        <view class="row">
+          <button class="label" bindtap="bindVoucherDetailTap" data-index="{{index}}">{{voucher.name}}</button>
+          <text class="voucher-status">{{voucher.verify_time?"已使用":"未使用"}}</text>
+        </view>
       </block>
     </scroll-view>
   </swiper-item>
   <swiper-item>
-    <scroll-view scroll-y="true" class="body">
+    <scroll-view scroll-y="true">
       <block wx:for="{{enterprises}}" wx:for-item="enterprise">
         <view class="row">
           <button class="label">{{enterprise.name}}</button>
@@ -30,7 +33,7 @@
     </scroll-view>
   </swiper-item>
   <swiper-item>
-    <scroll-view scroll-y="true" class="body">
+    <scroll-view scroll-y="true">
       <block wx:for="{{voucher_publish}}" wx:for-item="card">
         <button class="label" bindtap="bindVoucherPublishTap" data-index="{{index}}">{{card.name}}</button>
       </block>
