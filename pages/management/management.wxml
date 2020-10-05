@@ -1,9 +1,8 @@
 <!--pages/management/management.wxml-->
 <view class="row">
 <text class="title">我的</text>
-<button class="head-btn" bindtap="bindEnterpriseDetailTap">发起人入口</button>
+<button class="head-btn" bindtap="bindEnterpriseDetailTap">商家入口</button>
 </view>
-<text class="nav-btn">姓名头像</text>
 
 <view class="swiper-tab">
   <view class="swiper-tab-item {{currentTab==0?'active':''}}" data-current="0" bindtap="clickTab">已参加</view>
@@ -11,7 +10,7 @@
   <view class="swiper-tab-item {{currentTab==2?'active':''}}" data-current="2" bindtap="clickTab">已发布</view>
 </view>
  
-<swiper style="height:70vh" current="{{currentTab}}" duration="300" bindchange="swiperTab">
+<swiper style="height:75vh" current="{{currentTab}}" duration="300" bindchange="swiperTab">
   <swiper-item >
     <scroll-view scroll-y="true">
       <block wx:for="{{voucher_own}}" wx:for-item="voucher">

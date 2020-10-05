@@ -108,7 +108,7 @@ async function initDB(){
         _sql = 'create table if not exists ' + table_voucher_type + ' (id bigint, name VARCHAR(255), valid tinyint(1), PRIMARY KEY(id))'
         allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_voucher + ' (id bigint auto_increment not null unique, count int, voucher_type bigint, name varchar(255), valid tinyint(1), start_time datetime, end_time datetime, home varchar(255), publisher varchar(255), message varchar(255), primary key(id))'
+        _sql = 'create table if not exists ' + table_voucher + ' (id bigint auto_increment not null unique, count int, voucher_type bigint, name varchar(255), valid tinyint(1), start_time datetime, end_time datetime, image varchar(255), publisher varchar(255), message varchar(255), primary key(id))'
         allServices.query(_sql)
 
         _sql = 'create table if not exists ' + table_client_voucher + ' (id bigint auto_increment not null, client varchar(255), voucher bigint, verify_time datetime, PRIMARY KEY(id))'
@@ -288,8 +288,8 @@ var addEnterprise = async (ctx, next) => {
     _sql = 'select * from ' + table_voucher + ' where publisher=?'
     let voucher = await allServices.query(_sql, id)
     for (var i in voucher){
-      _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?, publisher=?, message=?'
-      let ret = await allServices.query(_sql, [voucher[i]["id"], voucher[i]["count"], voucher[i]["voucher_type"], voucher[i]["name"], 1, voucher[i]["start_time"], voucher[i]["end_time"], voucher[i]["home"], voucher[i]["publisher"], voucher[i]["message"]])
+      _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, image=?, publisher=?, message=?'
+      let ret = await allServices.query(_sql, [voucher[i]["id"], voucher[i]["count"], voucher[i]["voucher_type"], voucher[i]["name"], 1, voucher[i]["start_time"], voucher[i]["end_time"], voucher[i]["image"], voucher[i]["publisher"], voucher[i]["message"]])
     }
     ctx.response.body = {err: 0}
   }
@@ -312,7 +312,7 @@ var updateVoucherDetail = async (ctx, next) => {
   let valid = dt["valid"]
   let start_time = dt["start_time"]
   let end_time = dt["end_time"]
-  let home = dt["home"]
+  let image = dt["image"]
   let publisher = dt["publisher"]
   let message = dt["message"]
 
@@ -328,12 +328,12 @@ var updateVoucherDetail = async (ctx, next) => {
   _sql = 'select * from ' + table_voucher + ' where id=?'
   let voucher = await allServices.query(_sql, id)
   if (voucher.length > 0){
-    _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?, publisher=?, message=?'
-    let ret = await allServices.query(_sql, [id, count, voucher_type, name, valid != "false" ? 1 : 0, start_time, end_time, home, publisher, message])
+    _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, image=?, publisher=?, message=?'
+    let ret = await allServices.query(_sql, [id, count, voucher_type, name, valid != "false" ? 1 : 0, start_time, end_time, image, publisher, message])
     ctx.response.body = {state: true}
   }else{
-    _sql = 'insert into ' + table_voucher + ' set count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?, publisher=?, message=?'
-    let ret = await allServices.query(_sql, [count, voucher_type, name, valid != "false" ? 1 : 0, start_time, end_time, home, publisher, message])
+    _sql = 'insert into ' + table_voucher + ' set count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, image=?, publisher=?, message=?'
+    let ret = await allServices.query(_sql, [count, voucher_type, name, valid != "false" ? 1 : 0, start_time, end_time, image, publisher, message])
     ctx.response.body = {state: true}
   }
   
@@ -356,8 +356,8 @@ var updateVoucherList = async (ctx, next) => {
     let voucher = await allServices.query(_sql, voucher_id)
     if (voucher.length > 0){
       if (voucher[0]["count"] > 0){
-        _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, home=?, publisher=?, message=?'
-        let ret = await allServices.query(_sql, [voucher[0]["id"], voucher[0]["count"] - 1, voucher[0]["voucher_type"], voucher[0]["name"], voucher[0]["valid"], voucher[0]["start_time"], voucher[0]["end_time"], voucher[0]["home"], voucher[0]["publisher"], voucher[0]["message"]])
+        _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, image=?, publisher=?, message=?'
+        let ret = await allServices.query(_sql, [voucher[0]["id"], voucher[0]["count"] - 1, voucher[0]["voucher_type"], voucher[0]["name"], voucher[0]["valid"], voucher[0]["start_time"], voucher[0]["end_time"], voucher[0]["image"], voucher[0]["publisher"], voucher[0]["message"]])
 
         _sql = 'insert into ' + table_client_voucher + ' set client=?, voucher=?, verify_time=?'
         ret = await allServices.query(_sql, [client, voucher_id, verify_time])

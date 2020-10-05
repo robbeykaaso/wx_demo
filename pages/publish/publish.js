@@ -9,41 +9,58 @@ Page({
   data: {
     voucher_count: 1,
     message: "...",
-    voucher_title: "..."
+    voucher_title: "...",
+    voucher_type: ["优惠券", "折扣券", "裂变券"],
+    used_type: 1,
+    start_time: "2020-10-01",
+    end_time: "2020-10-02",
+    image_source: ""
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  increase: function(){
-    this.setData({voucher_count: this.data.voucher_count + 1})
+  chooseImage: function(e){
+    wx.chooseImage({
+      count: 1,
+      sizeType: ["original", "compressed"],
+      sourceType: ["album", "camera"],
+      success: res => {
+        this.setData({image_source: res.tempFilePaths[0]})
+        console.log(this.data.image_source)
+      }
+    })
   },
-  descrease: function(){
-    this.setData({voucher_count: Math.max(1, this.data.voucher_count - 1)})
+  bindStartTimeChange: function(e){
+    this.setData({start_time: e.detail.value})
+  },
+  bindEndTimeChange: function(e){
+    this.setData({end_time: e.detail.value})
+  },
+  typeChanged: function(e){
+    this.setData({used_type: e.detail + 1})
+  },
+  countChanged: function(e){
+    this.setData({voucher_count: e.detail})
   },
   editTitle: function(e){
     this.setData({voucher_title: e.detail.value})
-  },
-  editCount: function(e){
-    var cnt = parseInt(e.detail.value)
-    cnt = cnt == e.detail.value ? Math.max(1, cnt) : 1
-    this.setData({voucher_count: cnt})
   },
   editMessage: function(e){
     this.setData({message: e.detail.value})
   },
   bindPublishTap: function() {
     wx.request({
-      url: 'http://127.0.0.1:3000/updateVoucherDetail',
+      url: app.globalData.server + "/updateVoucherDetail",
       data: {
         count: this.data.voucher_count,
-        voucher_type: 1,
-        voucher_name: "world",
+        voucher_type: this.data.used_type,
+        voucher_name: this.data.voucher_type[this.data.used_type - 1],
         name: this.data.voucher_title,
         valid: app.globalData.isEnterprise,
-        start_time: "2006-07-02 08:09:04",
-        end_time: "2006-09-02 08:09:04",
-        home: "hello2",
+        start_time: this.data.start_time + " 00:00:00",
+        end_time: this.data.end_time + " 23:59:59",
+        image: this.data.image_source,
         publisher: app.globalData.openid,
         message: this.data.message
       },

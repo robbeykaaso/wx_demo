@@ -6,23 +6,23 @@
   <text class="master">标题</text>
   <input value="{{voucher_title}}" bindinput="editTitle" placeholder="标题"></input>
 </view>
-<button class="image">添加图片</button>
+<image wx:if="{{image_source != ''}}" class="image" mode="aspectFit" src="{{image_source}}"></image>
+<button wx:else class="image-banner" bindtap="chooseImage">+</button>
 <view class="row">
 <text class="master">数量</text>
-<view class="number-group">
-  <button class="number-cell" bindtap="descrease">-</button>
-  <input class="number-cell" type="number" min="1" value="{{voucher_count}}" bindinput="editCount" placeholder="数量"></input>
-  <button class="number-cell" bindtap="increase">+</button>
+<spin count="{{voucher_count}}" bindcountChanged="countChanged"></spin>
 </view>
+<view class="row">
+  <text class="master">起始时间</text>
+  <picker mode="date" value="{{start_time}}" start="2020-10-01" end="2025-10-01" bindchange="bindStartTimeChange">{{start_time}}</picker>
+</view>
+<view class="row">
+  <text class="master">截止时间</text>
+  <picker mode="date" value="{{end_time}}" start="2020-10-01" end="2025-10-01" bindchange="bindEndTimeChange">{{end_time}}</picker>
 </view>
 <view class="row-activity">
-<text style="color:orange;width:30vh">活动类型</text>
-<scroll-view scroll-y="true" class="col">
-  <block wx:for="{{activities}}" wx:for-item="act">
-    <button class="label">{{act.text}}</button>
-  </block>
-</scroll-view>
-<button class="label" style="width:30vh">可选项</button>
+<text class="master">活动类型</text>
+<combo style="z-index:2;width:30vh" selectData="{{voucher_type}}" bindindexChanged="typeChanged"></combo>
 </view>
-<textarea style="height:20vh" bindinput="editMessage" placeholder="活动信息" value="{{message}}"></textarea>
+<textarea style="height:23vh;z-index:1" bindinput="editMessage" placeholder="活动信息" value="{{message}}"></textarea>
 <mine0></mine0>

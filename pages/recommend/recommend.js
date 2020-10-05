@@ -22,7 +22,7 @@ Page({
    */
   receive: function(){
     wx.request({
-      url: 'http://127.0.0.1:3000/updateVoucherList',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/updateVoucherList",//'https://139.199.62.142:3000/',
       data: {"client": app.globalData.openid,
             "voucher": this.data.voucher_detail.id
             },
@@ -63,7 +63,7 @@ Page({
   },
   subscribeEnterprise: function(){
     wx.request({
-      url: 'http://127.0.0.1:3000/addSubscription',
+      url: app.globalData.server + "/addSubscription",
       data: {client: app.globalData.openid,
             enterprise: this.data.voucher_detail.publisher},
       success: (res)=>{
@@ -76,7 +76,7 @@ Page({
   },
   bindDetailTap: function(e){
     wx.request({
-      url: 'http://127.0.0.1:3000/getVoucherDetail',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
       data: {"id": this.data.activities[e.currentTarget.dataset.index].id},
       header:{
 
@@ -91,7 +91,7 @@ Page({
         this.setData({voucher_detail: detail})
 
         wx.request({
-          url: 'http://127.0.0.1:3000/getEnterpriseDetail',//'https://139.199.62.142:3000/',
+          url: app.globalData.server + "/getEnterpriseDetail",//'https://139.199.62.142:3000/',
           data: {"id": res.data["publisher"]},
           header:{
     
@@ -114,7 +114,7 @@ Page({
   updateVoucherList: function(){
     //get user detail
     wx.request({
-      url: 'http://127.0.0.1:3000/getEnterpriseDetail',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/getEnterpriseDetail",//'https://139.199.62.142:3000/',
       data: {id: app.globalData.openid},
       header:{
 
@@ -133,7 +133,7 @@ Page({
     })
     //get voucherlist recommended
     wx.request({
-      url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
       data: {client_subscription: app.globalData.openid},
       header:{
         "Content-type": "application/json"
@@ -142,7 +142,7 @@ Page({
         this.setData({"activities": res.data})
 
         wx.request({
-          url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+          url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
           data: {client: app.globalData.openid},
           header:{
     
@@ -172,7 +172,7 @@ Page({
     })
     //get voucherlist owned
     wx.request({
-      url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
       data: {"client_own": app.globalData.openid},
       header:{
         "Content-type": "application/json"
@@ -189,6 +189,7 @@ Page({
 
   },
   onLoad: function (options) {
+    app.globalData.server = "http://127.0.0.1:3000"
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {
         this.updateVoucherList()

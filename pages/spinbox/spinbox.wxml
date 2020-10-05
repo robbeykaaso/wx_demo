@@ -1,0 +1,6 @@
+<!--pages/spinbox.wxml-->
+<view class="number-group">
+  <button class="number-cell" bindtap="descrease">-</button>
+  <input class="number-cell" type="number" min="1" value="{{count}}" bindinput="editCount" placeholder="数量"></input>
+  <button class="number-cell" bindtap="increase">+</button>
+</view>

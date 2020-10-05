@@ -1,3 +1,5 @@
 {
-  "usingComponents": {"mine0": "../mine0/mine0"}
+  "usingComponents": {"mine0": "../mine0/mine0", 
+                      "spin": "../spinbox/spinbox",
+                      "combo":"../combobox/combobox"}
 }

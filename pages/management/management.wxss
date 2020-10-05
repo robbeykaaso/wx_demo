@@ -7,13 +7,15 @@
 
 .title{
   align-items: center;
-  padding-left: 40%;
+  padding-left: 45%;
+  font-size: 40rpx;
   color: orange;
 }
 
 .head-btn{
-  right: 0;
+  right: -10%;
   background-color: transparent;
+  font-size: 30rpx;
   color: orange;
 }
 

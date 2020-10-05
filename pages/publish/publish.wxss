@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 10vh;
+  height: 7vh;
 }
 
 .col {
@@ -43,14 +43,23 @@
 }
 
 .title{
+  border: blue 1px solid;
   color: rgb(38, 0, 255);
+  height: 8vh;
+  width: 100vw;
 }
 
 .image{
+  width: 100vw;
+  height: 20vh;
+}
+
+.image-banner{
   width: auto;
   height: 20vh;
   line-height: 20vh;
-  color: orange;
+  color: rgb(136, 132, 133);
+  font-size: 70rpx;
 }
 
 .master{
@@ -63,5 +72,5 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 20vh;
 }
+

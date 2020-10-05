@@ -21,7 +21,7 @@ Page({
     isEnterprise: false,
     showVoucherDetail: false,
     showEnterpriseDetail: false,
-    qrImage: "http://127.0.0.1:3000/getVoucherQRCode"
+    qrImage: app.globalData.server + "/getVoucherQRCode"
   },
 
   /**
@@ -35,7 +35,7 @@ Page({
    },
    updateEnterprises: function(){
     wx.request({
-      url: 'http://127.0.0.1:3000/getSubscribedEnterprises',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/getSubscribedEnterprises",//'https://139.199.62.142:3000/',
       data: {"client": app.globalData.openid},
       header:{
         "Content-type": "application/json"
@@ -50,7 +50,7 @@ Page({
    },
    unsubscribeEnterprise: function(e){
     wx.request({
-      url: 'http://127.0.0.1:3000/addSubscription',
+      url: app.globalData.server + "/addSubscription",
       data: {enterprise: e.currentTarget.dataset.index,
              del: true},
       success: (res)=>{
@@ -72,7 +72,7 @@ Page({
      })
      if (e.target.dataset.current == 0){
       /*wx.request({
-        url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+        url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
         data: {"client_own": app.globalData.openid},
         header:{
           "Content-type": "application/json"
@@ -89,7 +89,7 @@ Page({
        this.updateEnterprises()
      }else if (e.target.dataset.current == 2){
       wx.request({
-        url: 'http://127.0.0.1:3000/getVoucherList',//'https://139.199.62.142:3000/',
+        url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
         data: {"client_publish": app.globalData.openid},
         header:{
           "Content-type": "application/json"
@@ -113,7 +113,7 @@ Page({
       license_id: 1212121212,
       leader_id: 2121212121}
     wx.request({
-      url: 'http://127.0.0.1:3000/addEnterprise',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/addEnterprise",//'https://139.199.62.142:3000/',
       data: dt,
       header:{
 
@@ -140,7 +140,7 @@ Page({
   },
   bindVoucherDetailTap: function(e){
     wx.request({
-      url: 'http://127.0.0.1:3000/getVoucherDetail',//'https://139.199.62.142:3000/',
+      url: app.globalData.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
       data: {"id": this.data.voucher_own[e.currentTarget.dataset.index].id},
       header:{
 
@@ -153,7 +153,7 @@ Page({
             break
           }
         this.setData({voucher_detail: res.data})
-        this.setData({showVoucherDetail: true, qrImage: "http://127.0.0.1:3000/getVoucherQRCode?id=" + res.data.id})
+        this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?id=" + res.data.id})
       },
       fail: function(err){
         console.log("fail")
