@@ -46,12 +46,12 @@
 
 .modalDlg{
   width: 580rpx;
-  height: 80vh;
+  height: 90vh;
   position: fixed;
   top: 40%;
   left: 0;
   z-index: 9999;
-  margin: -370rpx 85rpx;
+  margin: -400rpx 85rpx;
   background-color: #fff;
   border-radius: 36rpx;
   display: flex;

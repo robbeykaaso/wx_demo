@@ -106,12 +106,8 @@ Page({
     }
    },
   register: function(){
-    var dt = {id: app.globalData.openid, 
-      name: "hello",
-      address: "hello@sina.com",
-      phone: 123456789,
-      license_id: 1212121212,
-      leader_id: 2121212121}
+    var dt = this.data.enterprise_detail
+    dt["id"] = app.globalData.openid 
     wx.request({
       url: app.globalData.server + "/addEnterprise",//'https://139.199.62.142:3000/',
       data: dt,
@@ -128,6 +124,21 @@ Page({
         console.log("fail")
       }
     })
+  },
+  bindSetLeaderID: function(e){
+    this.setData({"enterprise_detail.leader_id": e.detail.value})
+  },
+  bindSetLicenseID: function(e){
+    this.setData({"enterprise_detail.license_id": e.detail.value})
+  },
+  bindSetPhone: function(e){
+    this.setData({"enterprise_detail.phone": e.detail.value})
+  },
+  bindSetName: function(e){
+    this.setData({"enterprise_detail.name": e.detail.value})
+  },
+  bindSetAddress: function(e){
+    this.setData({"enterprise_detail.address": e.detail.value})
   },
   close: function(){
     this.setData({showVoucherDetail: false, showEnterpriseDetail: false})
@@ -153,7 +164,7 @@ Page({
             break
           }
         this.setData({voucher_detail: res.data})
-        this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?id=" + res.data.id})
+        this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
       },
       fail: function(err){
         console.log("fail")

@@ -15,7 +15,9 @@ Page({
     showVoucherDetail: false,
     showReqResult: false,
     reqMessage: "",
-    voucherDetailImage: ""
+    voucherDetailImage: "",
+    voucherDetailStartTime: "",
+    voucherDetailEndTime: ""
   },
 
   /**
@@ -48,7 +50,7 @@ Page({
       success: (res) => {
         wx.request({
           url: "http://" + res.result,
-          data: {client: app.globalData.openid},
+          data: {scanner: app.globalData.openid},
           success: (res)=>{
             this.setData({showReqResult: true, reqMessage: res.data.msg})
           },
@@ -89,7 +91,10 @@ Page({
             detail["own"] = true
             break
           }
-        this.setData({voucher_detail: detail, voucherDetailImage: app.globalData.server + "/" + detail.image})
+        this.setData({voucher_detail: detail, 
+                      voucherDetailImage: app.globalData.server + "/" + detail.image,
+                      voucherDetailStartTime: detail.start_time.split("T")[0],
+                      voucherDetailEndTime: detail.end_time.split("T")[0]})
         wx.request({
           url: app.globalData.server + "/getEnterpriseDetail",//'https://139.199.62.142:3000/',
           data: {"id": res.data["publisher"]},

@@ -50,24 +50,29 @@
 <view class="modalDlg" wx:if="{{showEnterpriseDetail}}">
   <button class="model-title" bindtap="close">X</button>
   <view class="row">
-    <text>名字:</text>
-    <text>{{enterprise_detail.name}}</text>
+    <text class="master">名字:</text>
+    <text wx:if="{{isEnterprise}}" class="master">{{enterprise_detail.name}}</text>
+    <input wx:else placeholder="名字" value="{{enterprise_detail.name}}" bindinput="bindSetName"></input>
   </view>
   <view class="row">
-    <text>地址:</text>
-    <text>{{enterprise_detail.address}}</text>
+    <text class="master">邮箱:</text>
+    <text wx:if="{{isEnterprise}}" class="master">{{enterprise_detail.address}}</text>
+    <input wx:else placeholder="邮箱" value="{{enterprise_detail.address}}" bindinput="bindSetAddress"></input>
   </view>
   <view class="row">
-    <text>电话:</text>
-    <text>{{enterprise_detail.phone}}</text>
+    <text class="master">手机号:</text>
+    <text wx:if="{{isEnterprise}}" class="master">{{enterprise_detail.phone}}</text>
+    <input wx:else placeholder="手机号" type="number" value="{{enterprise_detail.phone}}" bindinput="bindSetPhone"></input>
   </view>
   <view class="row">
-    <text>营业号:</text>
-    <text>{{enterprise_detail.license_id}}</text>
+    <text class="master">证件号:</text>
+    <text wx:if="{{isEnterprise}}" class="master">{{enterprise_detail.license_id}}</text>
+    <input wx:else placeholder="证件号" type="number" value="{{enterprise_detail.license_id}}" bindinput="bindSetLicenseID"></input>
   </view>
   <view class="row">
-    <text>负责人号</text>
-    <text>{{enterprise_detail.leader_id}}</text>
+    <text class="master">负责人号:</text>
+    <text wx:if="{{isEnterprise}}" class="master">{{enterprise_detail.leader_id}}</text>
+    <input wx:else placeholder="负责人号" type="number" value="{{enterprise_detail.leader_id}}" bindinput="bindSetLeaderID"></input>
   </view>
   <button wx:if="{{isEnterprise}}" bindtap="close">已注册</button>
   <button wx:else bindtap="register">注册</button>

@@ -45,13 +45,13 @@
 }
 
 .modalDlg{
-  width: 580rpx;
+  width: 750rpx;
   height: 620rpx;
   position: fixed;
   top: 50%;
   left: 0;
   z-index: 9999;
-  margin: -370rpx 85rpx;
+  margin: -370rpx 0rpx;
   background-color: #fff;
   border-radius: 36rpx;
   display: flex;
@@ -85,6 +85,12 @@
 
 .voucher-status{
   width: 40vw;
+  text-align: center;
+  color: orange;
+}
+
+.master{
+  width: 50vw;
   text-align: center;
   color: orange;
 }

@@ -388,9 +388,13 @@ var getVoucherQRCode = async (ctx, next) => {
 }
 
 var verifyVoucherQRCode = async (ctx, next) => {
-  let client = ctx.request.query.client
-  let dt = ctx.request.querystring
-  let voucher_id = dt.split("&")[0].split("=")[1]
+  let dt = ctx.request.query
+  let client = dt.client
+  let voucher_id = dt.id
+  if (dt.publisher != dt.scanner){
+    ctx.response.body = {err: 1, msg: "核销错误"}
+    return
+  }
   let _sql = 'select * from ' + table_client_voucher + ' where client=? and voucher=?'
   let receive = await allServices.query(_sql, [client, voucher_id])
   if (receive.length > 0){
