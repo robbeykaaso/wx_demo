@@ -14,11 +14,11 @@
 </view>
 <view class="row">
   <text class="master">起始时间</text>
-  <picker mode="date" value="{{start_time}}" start="2020-10-01" end="2025-10-01" bindchange="bindStartTimeChange">{{start_time}}</picker>
+  <picker mode="date" value="{{start_time}}" start="2020-01-01" end="2025-12-31" bindchange="bindStartTimeChange">{{start_time}}</picker>
 </view>
 <view class="row">
   <text class="master">截止时间</text>
-  <picker mode="date" value="{{end_time}}" start="2020-10-01" end="2025-10-01" bindchange="bindEndTimeChange">{{end_time}}</picker>
+  <picker mode="date" value="{{end_time}}" start="2020-01-01" end="2025-12-31" bindchange="bindEndTimeChange">{{end_time}}</picker>
 </view>
 <view class="row-activity">
 <text class="master">活动类型</text>

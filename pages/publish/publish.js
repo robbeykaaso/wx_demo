@@ -50,6 +50,9 @@ Page({
     this.setData({message: e.detail.value})
   },
   bindPublishTap: function() {
+    var pth = this.data.image_source
+    if (pth == "")
+      return
     wx.request({
       url: app.globalData.server + "/updateVoucherDetail",
       data: {
@@ -60,7 +63,7 @@ Page({
         valid: app.globalData.isEnterprise,
         start_time: this.data.start_time + " 00:00:00",
         end_time: this.data.end_time + " 23:59:59",
-        image: this.data.image_source,
+        image: "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length),
         publisher: app.globalData.openid,
         message: this.data.message
       },
@@ -68,7 +71,11 @@ Page({
         "Content-type": "application/json"
       },
       success: (res)=>{
-       
+        wx.uploadFile({
+          filePath: this.data.image_source,
+          name: res.data["path"], 
+          url: app.globalData.server + "/uploadVoucherImage"
+        })
       },
       fail: function(err){
         console.log("fail")

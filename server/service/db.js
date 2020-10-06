@@ -330,11 +330,17 @@ var updateVoucherDetail = async (ctx, next) => {
   if (voucher.length > 0){
     _sql = 'replace into ' + table_voucher + ' set id=?, count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, image=?, publisher=?, message=?'
     let ret = await allServices.query(_sql, [id, count, voucher_type, name, valid != "false" ? 1 : 0, start_time, end_time, image, publisher, message])
-    ctx.response.body = {state: true}
+    ctx.response.body = {err: 0}
   }else{
+    _sql = 'select * from ' + table_voucher
+    let tmp = await allServices.query(_sql)
+    id = tmp.length + 1
+    let idx = image.lastIndexOf(".")
+    let suffix = image.substring(idx, image.length)
+    image = image.substring(0, idx) + id + suffix
     _sql = 'insert into ' + table_voucher + ' set count=?, voucher_type=?, name=?, valid=?, start_time=?, end_time=?, image=?, publisher=?, message=?'
     let ret = await allServices.query(_sql, [count, voucher_type, name, valid != "false" ? 1 : 0, start_time, end_time, image, publisher, message])
-    ctx.response.body = {state: true}
+    ctx.response.body = {err: 0, path: image}
   }
   
 }
@@ -401,6 +407,24 @@ var verifyVoucherQRCode = async (ctx, next) => {
 
 }
 
+var uploadVoucherImage = async (ctx, next) => {
+  let fls = ctx.request.files
+  for (let i in fls){
+    let dirs = ("images/" + i).split("/")
+    let dir = ""
+    for (let j = 0; j < dirs.length - 1; ++j){
+      if (dir != "")
+        dir += "/"
+      dir += dirs[j]
+      if (!fs.existsSync(dir))
+        fs.mkdirSync(dir)
+    }
+    const reader = fs.createReadStream(fls[i].path)
+    const upStream = fs.createWriteStream("images/" + i);
+    reader.pipe(upStream)
+  }
+}
+
 let exp = {};
 exp['GET ' + '/'] = get_index
 exp['GET ' + '/addClient'] = addClient
@@ -415,5 +439,6 @@ exp['GET ' + '/updateVoucherDetail'] = updateVoucherDetail
 exp['GET ' + '/updateVoucherList'] = updateVoucherList
 exp['GET ' + '/getVoucherQRCode'] = getVoucherQRCode
 exp['GET ' + '/verifyVoucherQRCode'] = verifyVoucherQRCode
+exp['POST ' + '/uploadVoucherImage'] = uploadVoucherImage
 
 module.exports = exp

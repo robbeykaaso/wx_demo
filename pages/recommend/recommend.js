@@ -14,7 +14,8 @@ Page({
     },
     showVoucherDetail: false,
     showReqResult: false,
-    reqMessage: ""
+    reqMessage: "",
+    voucherDetailImage: ""
   },
 
   /**
@@ -88,8 +89,7 @@ Page({
             detail["own"] = true
             break
           }
-        this.setData({voucher_detail: detail})
-
+        this.setData({voucher_detail: detail, voucherDetailImage: app.globalData.server + "/" + detail.image})
         wx.request({
           url: app.globalData.server + "/getEnterpriseDetail",//'https://139.199.62.142:3000/',
           data: {"id": res.data["publisher"]},

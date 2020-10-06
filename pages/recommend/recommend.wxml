@@ -13,6 +13,7 @@
 <view class="modalDlg" wx:if="{{showVoucherDetail}}">
     <button class="model-title" bindtap="close">X</button>
     <text>{{voucher_detail.name}}</text>
+    <image mode="aspectFit" src="{{voucherDetailImage}}"></image>
     <text>{{voucher_detail.message}}</text>
     <view class="row">
       <text>发布者:</text>
