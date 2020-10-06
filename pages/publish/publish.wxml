@@ -6,8 +6,7 @@
   <text class="master">标题</text>
   <input value="{{voucher_title}}" bindinput="editTitle" placeholder="标题"></input>
 </view>
-<image wx:if="{{image_source != ''}}" class="image" mode="aspectFit" src="{{image_source}}"></image>
-<button wx:else class="image-banner" bindtap="chooseImage">+</button>
+<imagepanel source="{{image_source}}" bindsourceChanged="sourceChanged"></imagepanel>
 <view class="row">
 <text class="master">数量</text>
 <spin count="{{voucher_count}}" bindcountChanged="countChanged"></spin>

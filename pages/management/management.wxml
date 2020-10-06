@@ -69,11 +69,13 @@
     <text wx:if="{{isEnterprise}}" class="master">{{enterprise_detail.license_id}}</text>
     <input wx:else placeholder="证件号" type="number" value="{{enterprise_detail.license_id}}" bindinput="bindSetLicenseID"></input>
   </view>
+  <imagepanel source="{{license_image}}" bindsourceChanged="licenseChanged"></imagepanel>
   <view class="row">
     <text class="master">负责人号:</text>
     <text wx:if="{{isEnterprise}}" class="master">{{enterprise_detail.leader_id}}</text>
     <input wx:else placeholder="负责人号" type="number" value="{{enterprise_detail.leader_id}}" bindinput="bindSetLeaderID"></input>
   </view>
+  <imagepanel source="{{leader_image}}" bindsourceChanged="leaderChanged"></imagepanel>
   <button wx:if="{{isEnterprise}}" bindtap="close">已注册</button>
   <button wx:else bindtap="register">注册</button>
 </view>

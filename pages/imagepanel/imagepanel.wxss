@@ -1,0 +1,13 @@
+/* pages/imagepanel/imagepanel.wxss */
+.image{
+  width: 100vw;
+  height: 20vh;
+}
+
+.image-banner{
+  width: auto;
+  height: 20vh;
+  line-height: 20vh;
+  color: rgb(136, 132, 133);
+  font-size: 70rpx;
+}

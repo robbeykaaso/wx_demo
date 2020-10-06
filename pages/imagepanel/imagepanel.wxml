@@ -1,0 +1,3 @@
+<!--pages/imagepanel/imagepanel.wxml-->
+<image wx:if="{{source != ''}}" class="image" mode="aspectFit" src="{{source}}"></image>
+<button wx:else class="image-banner" bindtap="chooseImage">+</button>

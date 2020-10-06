@@ -21,6 +21,8 @@ Page({
     isEnterprise: false,
     showVoucherDetail: false,
     showEnterpriseDetail: false,
+    license_image: "",
+    leader_image: "",
     qrImage: app.globalData.server + "/getVoucherQRCode"
   },
 
@@ -32,6 +34,12 @@ Page({
     that.setData({
      currentTab: e.detail.current
     });
+   },
+   licenseChanged: function(e){
+    this.setData({license_image: e.detail})
+   },
+   leaderChanged: function(e){
+    this.setData({leader_image: e.detail})
    },
    updateEnterprises: function(){
     wx.request({

@@ -20,17 +20,6 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  chooseImage: function(e){
-    wx.chooseImage({
-      count: 1,
-      sizeType: ["original", "compressed"],
-      sourceType: ["album", "camera"],
-      success: res => {
-        this.setData({image_source: res.tempFilePaths[0]})
-        console.log(this.data.image_source)
-      }
-    })
-  },
   bindStartTimeChange: function(e){
     this.setData({start_time: e.detail.value})
   },
@@ -39,6 +28,9 @@ Page({
   },
   typeChanged: function(e){
     this.setData({used_type: e.detail + 1})
+  },
+  sourceChanged: function(e){
+    this.setData({image_source: e.detail})
   },
   countChanged: function(e){
     this.setData({voucher_count: e.detail})

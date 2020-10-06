@@ -1,3 +1,4 @@
 {
-  "usingComponents": {"mine0": "../mine0/mine0"}
+  "usingComponents": {"mine0": "../mine0/mine0",
+                      "imagepanel": "../imagepanel/imagepanel"}
 }
