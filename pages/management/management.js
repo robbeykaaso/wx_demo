@@ -116,6 +116,11 @@ Page({
   register: function(){
     var dt = this.data.enterprise_detail
     dt["id"] = app.globalData.openid 
+    if (this.data.license_image == "" || this.data.leader_image == "")
+      return
+    var pth0 = this.data.license_image, pth1 = this.data.leader_image
+    dt["license_img"] = "license/" + app.globalData.openid + "/0" + pth0.substr(pth0.lastIndexOf("."), pth0.length)
+    dt["leader_img"] = "leader/" + app.globalData.openid + "/0" + pth1.substr(pth1.lastIndexOf("."), pth1.length)
     wx.request({
       url: app.globalData.server + "/addEnterprise",//'https://139.199.62.142:3000/',
       data: dt,
@@ -123,6 +128,16 @@ Page({
 
       },
       success: (res)=>{
+        wx.uploadFile({
+          filePath: this.data.license_image,
+          name: dt["license_img"], 
+          url: app.globalData.server + "/uploadImage"
+        })
+        wx.uploadFile({
+          filePath: this.data.leader_image,
+          name: dt["leader_img"], 
+          url: app.globalData.server + "/uploadImage"
+        })
         app.globalData.isEnterprise = true
         app.globalData.enterprise_detail = dt
         this.onLoad()
@@ -155,7 +170,10 @@ Page({
     this.setData({showEnterpriseDetail: true})
   },
   bindVoucherPublishTap:  function(e){
-
+    wx.setStorageSync("voucher_detail", this.data.voucher_publish[e.currentTarget.dataset.index])
+    wx.redirectTo({
+      url: '../publish/publish'
+    })  
   },
   bindVoucherDetailTap: function(e){
     wx.request({
@@ -183,6 +201,8 @@ Page({
   onLoad: function (options) {
     this.setData({isEnterprise: app.globalData.isEnterprise,
     enterprise_detail: app.globalData.enterprise_detail,
+    license_image:  app.globalData.server + "/" + app.globalData.enterprise_detail.license_img,
+    leader_image:  app.globalData.server + "/" + app.globalData.enterprise_detail.leader_img,
     voucher_own: app.globalData.voucher_own})
   },
 

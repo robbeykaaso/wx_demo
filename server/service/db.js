@@ -268,14 +268,21 @@ var addEnterprise = async (ctx, next) => {
     ctx.response.body = {err: 1, msg: 'invalid license'}
     return
   }
-  let license_img = "hello"
+  let license_img = dt["license_img"]
+  if (license_img == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid license image'}
+    return
+  }
   let leader_id = dt["leader_id"]
   if (leader_id == undefined){
     ctx.response.body = {err: 1, msg: 'invalid leader'}
     return
   }
-  let leader_img = "hello"
-
+  let leader_img = dt["leader_img"]
+  if (leader_img == undefined){
+    ctx.response.body = {err: 1, msg: 'invalid leader image'}
+    return
+  }
   let _sql = 'select * from ' + table_enterprise + ' where id=?'
   let enterprise = await allServices.query(_sql, id)
   if (enterprise.length > 0){
@@ -411,7 +418,7 @@ var verifyVoucherQRCode = async (ctx, next) => {
 
 }
 
-var uploadVoucherImage = async (ctx, next) => {
+var uploadImage = async (ctx, next) => {
   let fls = ctx.request.files
   for (let i in fls){
     let dirs = ("images/" + i).split("/")
@@ -443,6 +450,6 @@ exp['GET ' + '/updateVoucherDetail'] = updateVoucherDetail
 exp['GET ' + '/updateVoucherList'] = updateVoucherList
 exp['GET ' + '/getVoucherQRCode'] = getVoucherQRCode
 exp['GET ' + '/verifyVoucherQRCode'] = verifyVoucherQRCode
-exp['POST ' + '/uploadVoucherImage'] = uploadVoucherImage
+exp['POST ' + '/uploadImage'] = uploadImage
 
 module.exports = exp

@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    voucher_id: "",
     voucher_count: 1,
     message: "...",
     voucher_title: "...",
@@ -45,20 +46,23 @@ Page({
     var pth = this.data.image_source
     if (pth == "")
       return
+    var dt = {
+      count: this.data.voucher_count,
+      voucher_type: this.data.used_type,
+      voucher_name: this.data.voucher_type[this.data.used_type - 1],
+      name: this.data.voucher_title,
+      valid: app.globalData.isEnterprise,
+      start_time: this.data.start_time + " 00:00:00",
+      end_time: this.data.end_time + " 23:59:59",
+      image: "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length),
+      publisher: app.globalData.openid,
+      message: this.data.message
+    }
+    if (this.data.voucher_id != "")
+      dt["id"] = this.data.voucher_id
     wx.request({
       url: app.globalData.server + "/updateVoucherDetail",
-      data: {
-        count: this.data.voucher_count,
-        voucher_type: this.data.used_type,
-        voucher_name: this.data.voucher_type[this.data.used_type - 1],
-        name: this.data.voucher_title,
-        valid: app.globalData.isEnterprise,
-        start_time: this.data.start_time + " 00:00:00",
-        end_time: this.data.end_time + " 23:59:59",
-        image: "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length),
-        publisher: app.globalData.openid,
-        message: this.data.message
-      },
+      data: dt,
       header:{
         "Content-type": "application/json"
       },
@@ -66,7 +70,7 @@ Page({
         wx.uploadFile({
           filePath: this.data.image_source,
           name: res.data["path"], 
-          url: app.globalData.server + "/uploadVoucherImage"
+          url: app.globalData.server + "/uploadImage"
         })
       },
       fail: function(err){
@@ -76,7 +80,20 @@ Page({
   },
 
   onLoad: function (options) {
-
+    var detail = wx.getStorageSync("voucher_detail")
+    if (detail){
+      this.setData({
+        voucher_id: detail["id"],
+        voucher_count: detail["count"],
+        message: detail["message"],
+        voucher_title: detail["name"],
+        used_type: detail["voucher_type"],
+        start_time: detail["start_time"].split("T")[0],
+        end_time: detail["end_time"].split("T")[0],
+        image_source: app.globalData.server + "/" + detail["image"]
+      })
+    }
+    wx.clearStorageSync("voucher_detail")
   },
 
   /**

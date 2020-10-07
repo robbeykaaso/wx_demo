@@ -1,6 +1,7 @@
 <!--pages/publish/publish.wxml-->
 <view class="view-title">
-<button class="title" bindtap="bindPublishTap">发布</button>
+<button wx:if="{{voucher_id == ''}}" class="title" bindtap="bindPublishTap">发布</button>
+<button wx:else class="title" bindtap="bindPublishTap">修改</button>
 </view>
 <view class="row">
   <text class="master">标题</text>
@@ -21,7 +22,7 @@
 </view>
 <view class="row-activity">
 <text class="master">活动类型</text>
-<combo style="z-index:2;width:30vh" selectData="{{voucher_type}}" bindindexChanged="typeChanged"></combo>
+<combo style="z-index:2;width:30vh" index="{{used_type - 1}}" selectData="{{voucher_type}}" bindindexChanged="typeChanged"></combo>
 </view>
 <textarea style="height:23vh;z-index:1" bindinput="editMessage" placeholder="活动信息" value="{{message}}"></textarea>
 <mine0></mine0>

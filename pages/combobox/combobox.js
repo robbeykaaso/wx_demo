@@ -7,6 +7,10 @@ Component({
     selectData:{
       type: Array,
       value: []
+    },
+    index:{
+      type: Number,
+      value: 0
     }
   },
 
