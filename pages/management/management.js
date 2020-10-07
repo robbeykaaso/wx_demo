@@ -190,7 +190,7 @@ Page({
             break
           }
         this.setData({voucher_detail: res.data})
-        this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
+        this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?" + app.globalData.server + "/verifyVoucherQRCode?" + "id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
       },
       fail: function(err){
         console.log("fail")

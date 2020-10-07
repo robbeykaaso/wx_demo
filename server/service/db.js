@@ -389,8 +389,8 @@ var updateVoucherList = async (ctx, next) => {
 
 var getVoucherQRCode = async (ctx, next) => {
   let dt = ctx.request.querystring
-  let img = qr.image(getIpAddress() + ":3000/verifyVoucherQRCode?" + dt, {size: 10})
-  //img.pipe(fs.createWriteStream("F:/qrqrText.png"))
+  let img = qr.image(dt, {size: 10})
+//  img.pipe(fs.createWriteStream("F:/qrqrText.png"))
   ctx.response.type = "image/png"
   ctx.response.body = img
 }

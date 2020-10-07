@@ -49,7 +49,7 @@ Page({
     wx.scanCode({
       success: (res) => {
         wx.request({
-          url: "http://" + res.result,
+          url: res.result,
           data: {scanner: app.globalData.openid},
           success: (res)=>{
             this.setData({showReqResult: true, reqMessage: res.data.msg})
