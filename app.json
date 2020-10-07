@@ -2,9 +2,7 @@
   "pages": [
     "pages/recommend/recommend",
     "pages/management/management",
-    "pages/publish/publish",
-    "pages/index/index",
-    "pages/logs/logs"
+    "pages/publish/publish"
   ],
   "window": {
     "backgroundTextStyle": "light",

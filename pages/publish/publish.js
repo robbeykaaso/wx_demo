@@ -46,6 +46,11 @@ Page({
     var pth = this.data.image_source
     if (pth == "")
       return
+    var idx = this.data.image_source.indexOf(app.globalData.server)
+    if (idx >= 0){
+      pth = pth.substring(idx + app.globalData.server.length + 1, pth.length)
+    }else
+      pth = "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length)
     var dt = {
       count: this.data.voucher_count,
       voucher_type: this.data.used_type,
@@ -54,7 +59,7 @@ Page({
       valid: app.globalData.isEnterprise,
       start_time: this.data.start_time + " 00:00:00",
       end_time: this.data.end_time + " 23:59:59",
-      image: "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length),
+      image: pth,
       publisher: app.globalData.openid,
       message: this.data.message
     }
