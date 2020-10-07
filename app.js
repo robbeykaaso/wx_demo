@@ -1,6 +1,8 @@
 //app.js
 App({
   onLaunch: function () {
+    this.globalData.server = "https://127.0.0.1:3000"
+    //this.globalData.server = "https://www.robbeykaaso.work:3000"// "http://127.0.0.1:3000"
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
@@ -9,13 +11,9 @@ App({
     // 登录
     wx.login({
       success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        var code = res.code; //返回code
-        var appId = 'wxb0bf61c63eeaa9a1';
-        var secret = '0da61b73a552059a47fe852f7c7e29f5';
         wx.request({
-          url: 'https://api.weixin.qq.com/sns/jscode2session?appid=' + appId + '&secret=' + secret + '&js_code=' + code + '&grant_type=authorization_code',
-          data: {},
+          url: this.globalData.server + "/getOpenID",
+          data: {code: res.code},
           header: {
             'content-type': 'json'
           },

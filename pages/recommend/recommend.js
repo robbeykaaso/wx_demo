@@ -194,8 +194,6 @@ Page({
 
   },
   onLoad: function (options) {
-    app.globalData.server = "https://127.0.0.1:3000"
-    //app.globalData.server = "http://81.68.237.175:3000"// "http://127.0.0.1:3000"
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {
         this.updateVoucherList()

@@ -2,6 +2,7 @@ const qr = require('qr-image')
 const os = require('os')
 const fs = require('fs')
 const moment = require('moment')
+const https=require("https")
 
 function getIpAddress() {
   var ifaces=os.networkInterfaces()
@@ -35,7 +36,7 @@ const db_config = {
   user: 'root',
   port: 3306,
 //  database: 'wx_test',
-  password: '1234',
+  password: fs.readFileSync('../../https/dbsecret.txt'),
   connectionLimit: 50
 }
 
@@ -436,6 +437,35 @@ var uploadImage = async (ctx, next) => {
   }
 }
 
+//https://blog.csdn.net/tiramisu_ljh/article/details/78487747
+var iconv = require("iconv-lite")
+var getOpenID = async (ctx, next) => {
+  let dt = ctx.request.query
+  let ret = await new Promise(
+    function(resolve, reject){
+      https.get("https://api.weixin.qq.com/sns/jscode2session?appid=" + fs.readFileSync('../../https/appid.txt') + 
+      "&secret=" + fs.readFileSync('../../https/appsecret.txt') + '&js_code=' + dt.code + "&grant_type=authorization_code",
+      function(res){
+       var datas = [];  
+       var size = 0;  
+       res.on('data', function (data) {  
+           datas.push(data);  
+           size += data.length;  
+       //process.stdout.write(data);  
+       });  
+       res.on("end", function () {  
+           var buff = Buffer.concat(datas, size);  
+           var result = iconv.decode(buff, "utf8");//转码//var result = buff.toString();//不需要转编码,直接tostring  
+           resolve(JSON.parse(result))
+       })
+      }).on("error", function(err){
+        reject(err)
+      })
+    }
+  )
+  ctx.response.body = ret 
+}
+
 let exp = {};
 exp['GET ' + '/'] = get_index
 exp['GET ' + '/addClient'] = addClient
@@ -450,6 +480,7 @@ exp['GET ' + '/updateVoucherDetail'] = updateVoucherDetail
 exp['GET ' + '/updateVoucherList'] = updateVoucherList
 exp['GET ' + '/getVoucherQRCode'] = getVoucherQRCode
 exp['GET ' + '/verifyVoucherQRCode'] = verifyVoucherQRCode
+exp['GET ' + '/getOpenID'] = getOpenID
 exp['POST ' + '/uploadImage'] = uploadImage
 
 module.exports = exp
