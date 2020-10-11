@@ -36,7 +36,7 @@ const db_config = {
   user: 'root',
   port: 3306,
 //  database: 'wx_test',
-  password: fs.readFileSync('../../https/dbsecret.txt').toString(),
+  password: fs.readFileSync('../../https/dbsecret.txt'),
   connectionLimit: 50
 }
 

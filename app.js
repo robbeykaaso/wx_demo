@@ -1,8 +1,8 @@
 //app.js
 App({
   onLaunch: function () {
-    //this.globalData.server = "https://127.0.0.1:3000"
-    this.globalData.server = "https://www.robbeykaaso.work:3000"// "http://127.0.0.1:3000"
+    this.globalData.server = "https://127.0.0.1:3000"
+    //this.globalData.server = "https://www.robbeykaaso.work:3000"// "http://127.0.0.1:3000"
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())

@@ -191,6 +191,19 @@ Page({
           }
         this.setData({voucher_detail: res.data})
         this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?" + app.globalData.server + "/verifyVoucherQRCode?" + "id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
+
+        wx.connectSocket({
+          url: "ws://127.0.0.1:3000",
+          success: res => {
+            console.log("hi")
+          },
+          fail: err => {
+            console.log("websocket fail");
+          }
+        })
+        wx.onSocketClose((result) => {
+          console.log(result)
+        })
       },
       fail: function(err){
         console.log("fail")
