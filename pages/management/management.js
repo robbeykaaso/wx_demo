@@ -195,11 +195,27 @@ Page({
         wx.connectSocket({
           url: "ws://127.0.0.1:3000",
           success: res => {
-            console.log("hi")
+
           },
           fail: err => {
             console.log("websocket fail");
           }
+        })
+        wx.onSocketMessage((result) => {
+          var dt = JSON.parse(result.data)
+          console.log(dt)
+        })
+        wx.onSocketOpen((result) => {
+          wx.sendSocketMessage({
+            data: '{"type": "who", "id": "' + app.globalData.openid + '"}',//{type: "who", id: app.globalData.openid},
+            success: function(e){
+            },
+            fail: function(e){
+              console.log(e)
+            },
+            complete: function(e){
+            }
+          })
         })
         wx.onSocketClose((result) => {
           console.log(result)
