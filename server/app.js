@@ -21,15 +21,21 @@ app.use(require('./controller')(__dirname + '/service'))
 
 https.createServer(options, app.callback()).listen(3000)
 
+var sockets = {}
 app.ws.use((ctx, next) => {
     //ctx.websocket.send({lalala: "hello"})
-    console.log("hello")
     ctx.websocket.on("message", (message)=>{
-        console.log(message)
-        //ctx.websocket.send(message)
+        let msg = JSON.parse(message)
+        if (msg["type"] == "who"){
+            sockets[msg["id"]] = ctx
+        }
+        ctx.websocket.send('{"verified": true}')
     })
     ctx.websocket.on("close", function(){
         console.log("close")
+    })
+    ctx.websocket.on("error", (err)=>{
+        console.log(err)
     })
 })
 
