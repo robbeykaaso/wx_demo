@@ -16,7 +16,8 @@
       <block wx:for="{{voucher_own}}" wx:for-item="voucher">
         <view class="row">
           <button class="label" bindtap="bindVoucherDetailTap" data-index="{{index}}">{{voucher.name}}</button>
-          <text class="voucher-status">{{voucher.verify_time?"已使用":"未使用"}}</text>
+          <text wx:if="{{voucher.verify_time}}" class="voucher-status">已使用</text>
+          <text wx:else class="voucher-status">未使用</text>
         </view>
       </block>
     </scroll-view>

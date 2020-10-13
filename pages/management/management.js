@@ -193,7 +193,7 @@ Page({
         this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?" + app.globalData.server + "/verifyVoucherQRCode?" + "id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
 
         wx.connectSocket({
-          url: "ws://127.0.0.1:3000",
+          url: "wss://127.0.0.1:3000",
           success: res => {
 
           },
@@ -203,7 +203,18 @@ Page({
         })
         wx.onSocketMessage((result) => {
           var dt = JSON.parse(result.data)
-          console.log(dt)
+          if (dt["type"] == "verify"){
+            if (dt["verify_time"]){
+              for (var i = 0; i < this.data.voucher_own.length; ++i)
+                if (this.data.voucher_own[i].id == this.data.voucher_detail.id){
+                  var tar = "voucher_own[" + i + "].verify_time"
+                  this.setData({[tar]: dt["verify_time"]})
+                  console.log(this.data.voucher_own[i].verify_time)
+                  break
+                }
+              this.setData({"voucher_detail.verify_time": dt["verify_time"]})
+            }
+          }
         })
         wx.onSocketOpen((result) => {
           wx.sendSocketMessage({

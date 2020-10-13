@@ -3,6 +3,7 @@ const os = require('os')
 const fs = require('fs')
 const moment = require('moment')
 const https=require("https")
+const clients=require("./client")
 
 function getIpAddress() {
   var ifaces=os.networkInterfaces()
@@ -403,7 +404,7 @@ var updateVoucherList = async (ctx, next) => {
 var getVoucherQRCode = async (ctx, next) => {
   let dt = ctx.request.querystring
   let img = qr.image(dt, {size: 10})
-//  img.pipe(fs.createWriteStream("F:/qrqrText.png"))
+  img.pipe(fs.createWriteStream("F:/qrqrText.png"))
   ctx.response.type = "image/png"
   ctx.response.body = img
 }
@@ -425,6 +426,8 @@ var verifyVoucherQRCode = async (ctx, next) => {
       let verify_time = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
       _sql = 'replace into ' + table_client_voucher + ' set id=?, client=?, voucher=?, verify_time=?'
       let ret = await allServices.query(_sql, [receive[0]['id'], client, voucher_id, verify_time])
+      if (clients[client])
+        clients[client].send('{"type": "verify", "verify_time": "' + verify_time + '"}')
       ctx.response.body = {err: 0, msg: "核销成功"}
     }
   }else
