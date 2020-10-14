@@ -26,7 +26,7 @@
     <scroll-view scroll-y="true">
       <block wx:for="{{enterprises}}" wx:for-item="enterprise">
         <view class="row">
-          <button class="label">{{enterprise.name}}</button>
+          <button class="label" bindtap="showSubscribedEnterprise" data-index="{{index}}">{{enterprise.name}}</button>
           <button bindtap="unsubscribeEnterprise" data-index="{{index}}">X</button>
         </view>
       </block>

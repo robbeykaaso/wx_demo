@@ -56,6 +56,9 @@ Page({
       }
     })
    },
+   showSubscribedEnterprise: function(e){
+     console.log("hi")
+   },
    unsubscribeEnterprise: function(e){
     wx.request({
       url: app.globalData.server + "/addSubscription",
@@ -209,7 +212,7 @@ Page({
                 if (this.data.voucher_own[i].id == this.data.voucher_detail.id){
                   var tar = "voucher_own[" + i + "].verify_time"
                   this.setData({[tar]: dt["verify_time"]})
-                  console.log(this.data.voucher_own[i].verify_time)
+                  app.globalData.voucher_own = this.data.voucher_own
                   break
                 }
               this.setData({"voucher_detail.verify_time": dt["verify_time"]})
