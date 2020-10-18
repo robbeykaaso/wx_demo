@@ -8,6 +8,8 @@ Page({
    */
   data: {
     currentTab: 0,
+    currentChildTab: 0,
+    activities: [],
     voucher_own: [
     ],
     voucher_detail: {
@@ -15,26 +17,77 @@ Page({
       message: "hello",
       verify_time: null
     },
+    enterprise_voucher_detail: {
+      name: "world",
+      message: "hello"
+    },
     enterprises: {},
     voucher_publish: [],
     enterprise_detail: {},
     isEnterprise: false,
     showVoucherDetail: false,
     showEnterpriseDetail: false,
+    showSubscribedEnterpriseDetail: false,
+    showSubscribedEnterpriseVoucher: false,
     license_image: "",
     leader_image: "",
+    enterpriseVoucherDetailStartTime: "",
+    enterpriseVoucherDetailEndTime: "",
+    enterpriseVoucherDetailImage: "",
     qrImage: app.globalData.server + "/getVoucherQRCode"
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  swiperTab: function (e) {
-    var that = this;
-    that.setData({
-     currentTab: e.detail.current
-    });
+   bindDetailTap: function(e){
+    wx.request({
+      url: app.globalData.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
+      data: {"id": this.data.activities[e.currentTarget.dataset.index].id},
+      header:{
+
+      },
+      success: (res)=>{
+        var detail = res.data
+        for (var i in app.globalData.voucher_own)
+          if (app.globalData.voucher_own[i].id == detail.id){
+            detail["own"] = true
+            break
+          }
+        this.setData({enterprise_voucher_detail: detail, 
+                      enterpriseVoucherDetailImage: app.globalData.server + "/" + detail.image,
+                      enterpriseVoucherDetailStartTime: detail.start_time.split("T")[0],
+                      enterpriseVoucherDetailEndTime: detail.end_time.split("T")[0],
+                      showSubscribedEnterprise: false,
+                      showSubscribedEnterpriseVoucher: true})
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
    },
+   receive: function(){
+    wx.request({
+      url: app.globalData.server + "/updateVoucherList",//'https://139.199.62.142:3000/',
+      data: {"client": app.globalData.openid,
+            "voucher": this.data.enterprise_voucher_detail.id
+            },
+      header:{
+
+      },
+      success: (res)=>{
+        if (res.data["err"]){
+          //this.setData({showReqResult: true, reqMessage: res.data.msg})
+        }else{
+          app.globalData.voucher_own.push(this.data.enterprise_voucher_detail)
+          this.setData({"enterprise_voucher_detail.own": true, voucher_own: app.globalData.voucher_own})
+        }
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
+  },
    licenseChanged: function(e){
     this.setData({license_image: e.detail})
    },
@@ -57,7 +110,20 @@ Page({
     })
    },
    showSubscribedEnterprise: function(e){
-     console.log("hi")
+    wx.request({
+      url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
+      data: {enterprise: e.currentTarget.dataset.index},
+      header:{
+        "Content-type": "application/json"
+      },
+      success: (res)=>{
+        this.setData({"activities": res.data})
+      },
+      fail: function(err){
+        console.log("fail")
+      }
+    })
+     this.setData({showSubscribedEnterpriseDetail: true})
    },
    unsubscribeEnterprise: function(e){
     wx.request({
@@ -71,6 +137,15 @@ Page({
         console.log("fail")
       }
     })
+   },
+   clickChildTab: function (e) {
+    if (this.data.currentChildTab === e.target.dataset.current) {
+      return false;
+     } else {
+      this.setData({
+        currentChildTab: e.target.dataset.current
+       })
+     }
    },
    //点击切换
    clickTab: function (e) {
@@ -167,7 +242,14 @@ Page({
     this.setData({"enterprise_detail.address": e.detail.value})
   },
   close: function(){
-    this.setData({showVoucherDetail: false, showEnterpriseDetail: false})
+    this.setData({showVoucherDetail: false, 
+                  showEnterpriseDetail: false, 
+                  showSubscribedEnterpriseDetail: false,
+                  showSubscribedEnterpriseVoucher: false})
+  },
+  closeChild: function(){
+    this.setData({showSubscribedEnterprise: true,
+                  showSubscribedEnterpriseVoucher: false})
   },
   bindEnterpriseDetailTap: function(e){
     this.setData({showEnterpriseDetail: true})
@@ -196,7 +278,8 @@ Page({
         this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?" + app.globalData.server + "/verifyVoucherQRCode?" + "id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
 
         wx.connectSocket({
-          url: "wss://127.0.0.1:3000",
+          //url: "wss://127.0.0.1:3000",
+          url: "wss://www.robbeykaaso.work:3000",
           success: res => {
 
           },
@@ -220,6 +303,7 @@ Page({
           }
         })
         wx.onSocketOpen((result) => {
+          console.log("wss connected")
           wx.sendSocketMessage({
             data: '{"type": "who", "id": "' + app.globalData.openid + '"}',//{type: "who", id: app.globalData.openid},
             success: function(e){

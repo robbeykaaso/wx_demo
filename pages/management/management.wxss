@@ -59,6 +59,24 @@
   align-items: center;
 }
 
+.modalDlg2{
+  width: 750rpx;
+  height: 80vh;
+  position: fixed;
+  top: 40%;
+  left: 0;
+  z-index: 9999;
+  margin: -370rpx 0rpx;
+  background-color: #fff;
+  border-radius: 36rpx;
+  flex-direction: column;
+  align-items: center;
+}
+
+.voucher-image{
+  width: 100vw;
+  height: 30vh;
+}
 /* pages/detail/detail.wxss */
 .swiper-tab{
   width: 100%;

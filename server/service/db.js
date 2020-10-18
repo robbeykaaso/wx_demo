@@ -183,7 +183,11 @@ var getVoucherList = async (ctx, next) => {
           ret.push(dt[k])
       }
       ctx.response.body = ret
-    } else if (dt["client_own"]){
+    }else if (dt["enterprise"]){
+      let _sql = 'select * from ' + table_voucher + ' where publisher=?'
+      let ret = await allServices.query(_sql, dt["enterprise"])
+      ctx.response.body = ret
+    }else if (dt["client_own"]){
       let _sql = 'select * from ' + table_client_voucher + ' where client=?'
       let lst = await allServices.query(_sql, dt["client_own"])
       let ret = []
