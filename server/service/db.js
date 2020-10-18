@@ -41,18 +41,18 @@ const db_config = {
   connectionLimit: 50
 }
 
+const conn = sql.createConnection(db_config)
 function handleError (err) {
   if (err) {
     // 如果是连接断开，自动重新连接
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-      connect();
+      conn.connect(handleError);
     } else {
       console.error(err.stack || err);
     }
   }
 }
 
-const conn = sql.createConnection(db_config)
 conn.connect(handleError);
 conn.on('error', handleError);
 
