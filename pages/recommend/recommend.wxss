@@ -58,3 +58,8 @@
   flex-direction: column;
   align-items: center;
 }
+
+.model-image{
+  width: 60vw;
+  height: 40vh;
+}

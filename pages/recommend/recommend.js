@@ -64,13 +64,17 @@ Page({
   close: function(){
     this.setData({showVoucherDetail: false, showReqResult: false})
   },
+  closeMsg: function(){
+    this.setData({showReqResult: false})
+  },
   subscribeEnterprise: function(){
     wx.request({
       url: app.globalData.server + "/addSubscription",
       data: {client: app.globalData.openid,
             enterprise: this.data.voucher_detail.publisher},
       success: (res)=>{
-
+        if (res.data.err)
+          this.setData({showReqResult: true, reqMessage: res.data.msg})
       },
       fail: function(err){
         console.log("fail")
