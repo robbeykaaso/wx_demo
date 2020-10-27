@@ -41,7 +41,7 @@ const db_config = {
   connectionLimit: 50
 }
 
-const conn = sql.createConnection(db_config)
+/*const conn = sql.createConnection(db_config)
 function handleError (err) {
   if (err) {
     // 如果是连接断开，自动重新连接
@@ -54,20 +54,33 @@ function handleError (err) {
 }
 
 conn.connect(handleError);
-conn.on('error', handleError);
+conn.on('error', handleError);*/
+
+var pool = sql.createPool(db_config)
 
 let allServices = {
   query: function (sql, values) {
 
       return new Promise((resolve, reject) => {
-        conn.query(sql, values, (err, rows) => {
-
-            if (err) {
-                reject(err)
-            } else {
-                resolve(rows)
-            }
-            //connection.release()
+        pool.getConnection(function(err, conn){
+          if (err)
+            reject(err)
+          else
+            conn.changeUser({database: data_base}, function(err){
+              if (err){
+                  console.log ("connect db failed!")
+                  return
+              }
+              conn.query(sql, values, (err, rows) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(rows)
+                }
+                pool.releaseConnection(conn)
+                //conn.release()
+              })
+            })
         })
       })
   },
@@ -103,33 +116,36 @@ var get_index = async (ctx, next) => {
 //allServices.deleteDB(db_config.database)
 async function initDB(){
     await allServices.createDB(data_base)
-    conn.changeUser({database: data_base}, function(err){
-        if (err){
-            console.log ("connect db failed!")
-            return
-        }
-        //let _sql = 'create table if not exists ' + table_subscription + ' (id int AUTO_INCREMENT, title VARCHAR(255), PRIMARY KEY(id))'
-        //allServices.query(_sql)
+    pool.getConnection(function(err, conn){
+      if (err) throw err
+      conn.changeUser({database: data_base}, function(err){
+          if (err){
+              console.log ("connect db failed!")
+              return
+          }
+          //let _sql = 'create table if not exists ' + table_subscription + ' (id int AUTO_INCREMENT, title VARCHAR(255), PRIMARY KEY(id))'
+          //allServices.query(_sql)
 
-        let _sql = 'create table if not exists ' + table_client + ' (id varchar(255), PRIMARY KEY(id))'
-        allServices.query(_sql)
+          let _sql = 'create table if not exists ' + table_client + ' (id varchar(255), PRIMARY KEY(id))'
+          allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_enterprise + ' (id varchar(255), name VARCHAR(255), address VARCHAR(255), online tinyint(1), phone bigint(11), license_id bigint, license_img VARCHAR(255), leader_id bigint, leader_img VARCHAR(255), PRIMARY KEY(id))'
-        allServices.query(_sql)   
-        
-        _sql = 'create table if not exists ' + table_client_enterprise + ' (id bigint auto_increment not null, client varchar(255), enterprise varchar(255), PRIMARY KEY(id))'
-        allServices.query(_sql)
+          _sql = 'create table if not exists ' + table_enterprise + ' (id varchar(255), name VARCHAR(255), address VARCHAR(255), online tinyint(1), phone bigint(11), license_id bigint, license_img VARCHAR(255), leader_id bigint, leader_img VARCHAR(255), PRIMARY KEY(id))'
+          allServices.query(_sql)   
+          
+          _sql = 'create table if not exists ' + table_client_enterprise + ' (id bigint auto_increment not null, client varchar(255), enterprise varchar(255), PRIMARY KEY(id))'
+          allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_voucher_type + ' (id bigint, name VARCHAR(255), valid tinyint(1), PRIMARY KEY(id))'
-        allServices.query(_sql)
+          _sql = 'create table if not exists ' + table_voucher_type + ' (id bigint, name VARCHAR(255), valid tinyint(1), PRIMARY KEY(id))'
+          allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_voucher + ' (id bigint auto_increment not null unique, count int, voucher_type bigint, name varchar(255), valid tinyint(1), start_time datetime, end_time datetime, image varchar(255), publisher varchar(255), message varchar(255), primary key(id))'
-        allServices.query(_sql)
+          _sql = 'create table if not exists ' + table_voucher + ' (id bigint auto_increment not null unique, count int, voucher_type bigint, name varchar(255), valid tinyint(1), start_time datetime, end_time datetime, image varchar(255), publisher varchar(255), message varchar(255), primary key(id))'
+          allServices.query(_sql)
 
-        _sql = 'create table if not exists ' + table_client_voucher + ' (id bigint auto_increment not null, client varchar(255), voucher bigint, verify_time datetime, PRIMARY KEY(id))'
-        allServices.query(_sql)
+          _sql = 'create table if not exists ' + table_client_voucher + ' (id bigint auto_increment not null, client varchar(255), voucher bigint, verify_time datetime, PRIMARY KEY(id))'
+          allServices.query(_sql)
+      })
+      //await allServices.createTable('coupons')
     })
-    //await allServices.createTable('coupons')
 }
 initDB()
 
