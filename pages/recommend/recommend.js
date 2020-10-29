@@ -1,4 +1,7 @@
 // pages/recommend/recommend.js
+var pip = require("../rea.js")
+const { run } = require("../rea.js")
+
 const app = getApp()
 Page({
 
@@ -193,6 +196,13 @@ Page({
 
   },
   onLoad: function (options) {
+    pip.add(function(aInput){
+      return aInput
+    }, {name: "test"}).nextF(function(aInput){
+      console.log(aInput)
+    })
+    pip.run("test", "hello")
+
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {
         this.updateVoucherList()
