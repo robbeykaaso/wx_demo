@@ -169,11 +169,6 @@ Page({
             console.log("fail")
           }
         })
-            //var tmp = "activities[1]"
-            //this.setData({[tmp]: {"name": "world"}})
-        //console.log(app.globalData.openid)
-        //var tmp = "activities[1]"
-        //this.setData({[tmp]: {"name": "world"}})
       },
       fail: function(err){
         console.log("fail")

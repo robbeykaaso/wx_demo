@@ -7,6 +7,7 @@
   <block wx:for="{{activities}}" wx:for-item="act">
     <button class="label" bindtap="bindDetailTap" data-index="{{index}}">{{act.name}}/剩余:{{act.count}}</button>
   </block>
+  <ad unit-id="adunit-e6b58d1103e7d424"></ad>
 </scroll-view>
 
 <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showVoucherDetail || showReqResult}}"></view>

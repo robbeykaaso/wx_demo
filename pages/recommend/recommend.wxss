@@ -46,7 +46,7 @@
 
 .modalDlg{
   width: 580rpx;
-  height: 90vh;
+  height: 80vh;
   position: fixed;
   top: 40%;
   left: 0;
