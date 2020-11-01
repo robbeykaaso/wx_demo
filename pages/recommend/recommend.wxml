@@ -3,11 +3,11 @@
 <text class="title">每日推荐</text>
 <button class="head-btn" bindtap="getScancode">扫码核销</button>
 </view>
-<scroll-view scroll-y="true" class="body">
-  <block wx:for="{{activities}}" wx:for-item="act">
+<scroll-view scroll-y="true" class="body" bindscrolltolower="lower">
+  <block wx:for="{{activities_show}}" wx:for-item="act">
     <button class="label" bindtap="bindDetailTap" data-index="{{index}}">{{act.name}}/剩余:{{act.count}}</button>
   </block>
-  <ad unit-id="adunit-e6b58d1103e7d424"></ad>
+  <!-- <ad unit-id="adunit-e6b58d1103e7d424"></ad> -->
 </scroll-view>
 
 <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showVoucherDetail || showReqResult}}"></view>

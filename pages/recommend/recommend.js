@@ -10,6 +10,8 @@ Page({
    */
   data: {
     activities: [],
+    activities_show: [],
+    showindex: 0,
     voucher_detail: {
       name: "world",
       message: "hello",
@@ -26,6 +28,41 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
+  lower: function(){
+    var cnt = this.data.showindex
+    var cnt0 = 0
+    var entries = this.data.activities
+    var new_show = []
+    for (var i = cnt; i < entries.length; ++i){
+      cnt = parseInt(i) + 1
+      if (entries[i].valid){
+        new_show.push(entries[i])
+        cnt0++
+      }
+      if (cnt0 > 5)
+        break
+    }
+    var showed = this.data.activities_show
+    this.setData({showindex: cnt})
+    if (cnt <= entries.length){
+      wx.showLoading({ //期间为了显示效果可以添加一个过度的弹出框提示“加载中”  
+        title: '加载中',
+        icon: 'loading',
+      });
+      setTimeout(() => {
+        this.setData({
+          activities_show: showed.concat(new_show)
+        });
+        wx.hideLoading();
+      }, 500)
+    }else{
+      wx.showToast({
+        title: "到底啦",
+        icon: "success",
+        duration: 500
+      })
+    }
+  },
   receive: function(){
     wx.request({
       url: app.globalData.server + "/updateVoucherList",//'https://139.199.62.142:3000/',
@@ -167,6 +204,20 @@ Page({
                 this.setData({[tmp]: res.data[i]})
                 cnt++
               }
+            var entries = this.data.activities
+            var cnt0 = 0
+            var cnt = this.data.showindex
+            for (var i in entries){
+              cnt = parseInt(i) + 1
+              if (entries[i].valid){
+                var tmp = "activities_show[" + cnt0 + "]"
+                this.setData({[tmp]: entries[i]})
+                cnt0++
+                if (cnt0 > 5)
+                  break
+              }
+            }  
+            this.setData({showindex: cnt})
           },
           fail: function(err){
             console.log("fail")
@@ -196,13 +247,6 @@ Page({
 
   },
   onLoad: function (options) {
-    pip.add(function(aInput){
-      return aInput
-    }, {name: "test"}).nextF(function(aInput){
-      console.log(aInput)
-    })
-    pip.run("test", "hello")
-
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {
         this.updateVoucherList()
