@@ -1,6 +1,7 @@
 // pages/recommend/recommend.js
 var pip = require("../rea.js")
 const { run } = require("../rea.js")
+const rea = require("../rea.js")
 
 const app = getApp()
 Page({
@@ -247,6 +248,7 @@ Page({
 
   },
   onLoad: function (options) {
+    pip.run("unitTest", {})
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {
         this.updateVoucherList()
