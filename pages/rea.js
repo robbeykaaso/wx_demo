@@ -101,23 +101,35 @@ class pipe{
   }
 
   next(aName, aParam){
-    this.nexts[aName] = aParam
+    this.nexts[aName] = aParam || {}
     return pips[aName]
   }
 
   nextB(aName, aParam){
-    this.nexts[aName] = aParam
+    this.nexts[aName] = aParam || {}
     return this
   }
 }
 
-let find = (aName) => {
-  return pips[aName]
+let find = (aName, aNeedFuture = true) => {
+  let ret = pips[aName]
+  if (!ret && aNeedFuture){
+    let future_nm = aName + "_pipe_add"
+    ret = pips[future_nm] || add(function(aInput){
+      let nxts = pips[future_nm].nexts
+      for (let i in nxts)
+        pips[aName].nexts[i] = nxts[i]
+      delete pips[future_nm]
+    }, {name: future_nm})
+  }
+  return ret
 }
 
 let add = (aFunc, aPipeParam) => {
   let pip = new pipe(aPipeParam ? aPipeParam["name"] : "", aFunc, aPipeParam ? aPipeParam["replace"] : false)
   pips[pip.name] = pip
+  if (!pip.anonymous)
+    run(pip.name + "_pipe_add")
   return pip
 }
 
@@ -133,23 +145,38 @@ let remove = (aName) => {
 
 add(function(){
   add(function(aInput){
-    aInput.setData("hello2").out()
+    aInput.setData("hello").out()
   }, {name: "test1"})
   .nextF(function(aInput){
-    console.assert(aInput.data == "hello2")
+    console.assert(aInput.data == "hello")
     console.log("test1 success!")
   })
 
   add(function(aInput){
-    aInput.out1("hello3", "test3")
+    aInput.out1("hello", "test2_")
   }, {name: "test2"})
   .nextF(function(aInput){
-    console.assert(aInput.data == "hello3")
+    console.assert(aInput.data == "hello")
     console.log("test2 success!")
-  }, {}, {name: "test3"})
+  }, {}, {name: "test2_"})
+
+  find("test3").next("test3_")
+  find("test3").next("test3__")
+  add(function(aInput){
+    aInput.out()
+  }, {name: "test3"})
+  add(function(aInput){
+    console.assert(aInput.data == "hello")
+    console.log("test3_ success!")
+  }, {name: "test3_"})
+  add(function(aInput){
+    console.assert(aInput.data == "hello")
+    console.log("test3__ success!")
+  }, {name: "test3__"})
 
   run("test1", "hello")
   run("test2", "hello")
+  run("test3", "hello")
 }, {name: "unitTest"})
 
 module.exports = {
