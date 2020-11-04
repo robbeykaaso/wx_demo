@@ -116,9 +116,7 @@ let find = (aName, aNeedFuture = true) => {
   if (!ret && aNeedFuture){
     let future_nm = aName + "_pipe_add"
     ret = pips[future_nm] || add(function(aInput){
-      let nxts = pips[future_nm].nexts
-      for (let i in nxts)
-        pips[aName].nexts[i] = nxts[i]
+      pips[aName].nexts = pips[future_nm].nexts
       delete pips[future_nm]
     }, {name: future_nm})
   }
