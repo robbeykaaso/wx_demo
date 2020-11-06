@@ -1,6 +1,7 @@
 <!--pages/management/management.wxml-->
 <view class="row">
-<text class="title">我的</text>
+<image class="userinfo-avatar" src="{{userInfo.avatarUrl}}"></image>
+<text class="userinfo-nickname">{{userInfo.nickName}}</text>
 <button class="head-btn" bindtap="bindEnterpriseDetailTap">商家入口</button>
 </view>
 
@@ -10,9 +11,9 @@
   <view class="swiper-tab-item {{currentTab==2?'active':''}}" data-current="2" bindtap="clickTab">已发布</view>
 </view>
  
-<swiper style="height:75vh" current="{{currentTab}}" duration="300">
+<swiper style="height:45vh" current="{{currentTab}}" duration="300">
   <swiper-item >
-    <scroll-view scroll-y="true">
+    <scroll-view style="height:100%;" scroll-y="true">
       <block wx:for="{{voucher_own}}" wx:for-item="voucher">
         <view class="row">
           <button class="label" bindtap="bindVoucherDetailTap" data-index="{{index}}">{{voucher.name}}</button>
@@ -23,7 +24,7 @@
     </scroll-view>
   </swiper-item>
   <swiper-item>
-    <scroll-view scroll-y="true">
+    <scroll-view style="height:100%;" scroll-y="true">
       <block wx:for="{{enterprises}}" wx:for-item="enterprise">
         <view class="row">
           <button class="label" bindtap="showSubscribedEnterprise" data-index="{{enterprise.id}}">{{enterprise.name}}</button>
@@ -33,13 +34,21 @@
     </scroll-view>
   </swiper-item>
   <swiper-item>
-    <scroll-view scroll-y="true">
+    <scroll-view style="height:100%;" scroll-y="true">
       <block wx:for="{{voucher_publish}}" wx:for-item="card">
         <button class="label" bindtap="bindVoucherPublishTap" data-index="{{index}}">{{card.name}}</button>
       </block>
     </scroll-view>
   </swiper-item>
 </swiper>
+
+<view class='gridview'>
+  <block wx:for="{{listdata}}" wx:key="key">
+    <view class='gridview-item'>
+      <text>{{item.content}}</text>
+    </view>
+  </block>
+</view>
 
 <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showVoucherDetail || showEnterpriseDetail || showSubscribedEnterpriseDetail || showSubscribedEnterpriseVoucher}}"></view>
 <view class="modalDlg" wx:if="{{showVoucherDetail}}">

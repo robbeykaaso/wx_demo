@@ -12,8 +12,32 @@
   color: orange;
 }
 
+.userinfo-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  color: #aaa;
+}
+
+.gridview{
+  margin: 5rpx 10rpx 5rpx 10rpx;
+}
+
+.gridview-item{
+  margin: 1vw;
+  width: 22vw;
+  height: 22vw;
+  float: left;
+  text-align: center;
+  background-color: aliceblue;
+}
+
 .head-btn{
-  right: -10%;
+  right: -30%;
   background-color: transparent;
   font-size: 30rpx;
   color: orange;

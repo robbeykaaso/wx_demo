@@ -21,6 +21,23 @@ Page({
       name: "world",
       message: "hello"
     },
+    listdata: [{
+        content: "功能1"
+      },
+      {
+        content: "功能2"
+      },
+      {
+        content: "功能3"
+      },
+      {
+        content: "功能4"
+      },
+      {
+        content: "功能5"
+      }
+    ],
+    userInfo: {},
     enterprises: {},
     voucher_publish: [],
     enterprise_detail: {},
@@ -326,7 +343,9 @@ Page({
     
   },
   onLoad: function (options) {
-    this.setData({isEnterprise: app.globalData.isEnterprise,
+    this.setData({
+      userInfo: app.globalData.userInfo,
+      isEnterprise: app.globalData.isEnterprise,
     enterprise_detail: app.globalData.enterprise_detail,
     license_image:  app.globalData.server + "/" + app.globalData.enterprise_detail.license_img,
     leader_image:  app.globalData.server + "/" + app.globalData.enterprise_detail.leader_img,
