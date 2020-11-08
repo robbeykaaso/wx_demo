@@ -80,20 +80,44 @@ class pipe{
         for (let i in this.nexts){
           let pip = pips[i]
           if (pip)
-            pip.do(aInput, aInput.param | this.nexts[i])
+            pip.execute(aInput, aInput.param | this.nexts[i])
         }
       else
         for (let i in aInput.outs){
           let ot = aInput.outs[i]
-          let pip = pips[ot[0]]
-          if (this.nexts[ot[0]]){
-            if (pip)
-              pip.do(ot[1], ot[1].param | this.nexts[ot[0]])
-          }
-          else{
-
+          if (!ot[0]){
+            for (let i in this.nexts){
+              let pip = pips[i]
+              if (pip && pip.anonymous)
+                pip.execute(ot[1], ot[1].param | this.nexts[i])
+            }
+          }else{
+            let pip = pips[ot[0]]
+            if (this.nexts[ot[0]]){
+              if (pip)
+                pip.execute(ot[1], ot[1].param | this.nexts[ot[0]])
+            }
+            else{
+              let exed = false
+              for (let j in this.nexts){
+                let pip = pips[j]
+                if (pip && pip.local_name == ot[0]){
+                  pip.execute(ot[1], ot[1].param | this.nexts[j])
+                  exed = true
+                }
+              }
+              if (!exed){
+                let pip = pips[ot[0]]
+                if (pip)
+                  pip.execute(ot[1], ot[1].param)
+              }
+            }
           }
         }
+  }
+
+  execute(aInput, aParam){
+    this.do(aInput, aParam)
   }
 
   nextF(aFunc, aParam, aPipeParam){
@@ -111,6 +135,21 @@ class pipe{
   }
 }
 
+class pipeLocal extends pipe{
+  constructor(aName){
+    super("")
+    this.local_name = aName
+  }
+  execute(aInput, aParam){
+    if (!this.func){
+      let pip = pips[this.local_name]
+      if (pip)
+        this.func = pip.func
+    }
+    this.do(aInput, aParam)
+  }
+}
+
 let find = (aName, aNeedFuture = true) => {
   let ret = pips[aName]
   if (!ret && aNeedFuture){
@@ -124,7 +163,15 @@ let find = (aName, aNeedFuture = true) => {
 }
 
 let add = (aFunc, aPipeParam) => {
-  let pip = new pipe(aPipeParam ? aPipeParam["name"] : "", aFunc, aPipeParam ? aPipeParam["replace"] : false)
+  let pip
+  if (aPipeParam){
+    if (aPipeParam["type"] == "Local")
+      pip = new pipeLocal(aPipeParam["name"])
+    else
+      pip = new pipe(aPipeParam ? aPipeParam["name"] : "", aFunc, aPipeParam ? aPipeParam["replace"] : false)
+  }
+  else
+    pip = new pipe("", aFunc)
   pips[pip.name] = pip
   if (!pip.anonymous)
     run(pip.name + "_pipe_add")
@@ -134,11 +181,15 @@ let add = (aFunc, aPipeParam) => {
 let run = (aName, aInput, aParam) => {
   let src = pips[aName]
   if (src)
-    src.do(new stream(aInput), aParam)
+    src.execute(new stream(aInput), aParam)
 }
 
 let remove = (aName) => {
   delete pips[aName]
+}
+
+let local = (aName) => {
+  return add(null, {name: aName, type: "Local"}).name
 }
 
 add(function(){
@@ -172,9 +223,28 @@ add(function(){
     console.log("test3__ success!")
   }, {name: "test3__"})
 
-  run("test1", "hello")
-  run("test2", "hello")
-  run("test3", "hello")
+  add(function(aInput){
+    aInput.out()
+  }, {name: "test4"})
+  .next(local("test4_"))
+  .nextF(function(aInput){
+    console.assert(aInput.data == "hello")
+    console.log("test4 success")
+  })
+  add(function(aInput){
+    aInput.out()
+  }, {name: "test4_"})
+  .nextF(function(aInput){
+    console.log("test4_ success")
+  })
+
+  run("test1", "hello") //normal next
+  run("test2", "hello") //specific pipe
+  run("test3", "hello") //pipeFuture
+  run("test4", "hello") //pipeLocal
+  run("test4_", "hello") 
+  //pipeDelegate
+  //pipePartial
 }, {name: "unitTest"})
 
 module.exports = {

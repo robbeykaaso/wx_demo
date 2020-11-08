@@ -188,36 +188,31 @@ var addSubscription = async (ctx, next) => {
 var getVoucherList = async (ctx, next) => {
     //all, by subscription, by enterprise, by client
     let dt = ctx.request.query
+    let ret = []
     if (dt["client_subscription"]){
       let _sql = 'select * from ' + table_client_enterprise + ' where client=?'
       let lst = await allServices.query(_sql, dt["client_subscription"])
-      let ret = []
       for (let i in lst){
         _sql = 'select * from ' + table_voucher + ' where publisher=?'
         let dt = await allServices.query(_sql, lst[i]["enterprise"])
         for (let k in dt)
           ret.push(dt[k])
       }
-      ctx.response.body = ret
     }else if (dt["enterprise"]){
       let _sql = 'select * from ' + table_voucher + ' where publisher=?'
-      let ret = await allServices.query(_sql, dt["enterprise"])
-      ctx.response.body = ret
+      ret = await allServices.query(_sql, dt["enterprise"])
     }else if (dt["client_own"]){
       let _sql = 'select * from ' + table_client_voucher + ' where client=?'
       let lst = await allServices.query(_sql, dt["client_own"])
-      let ret = []
       for (let i in lst){
         _sql = 'select * from ' + table_voucher + ' where id=?'
         let dt = await allServices.query(_sql, lst[i]["voucher"])
         dt[0]["verify_time"] = lst[i]["verify_time"]
         ret.push(dt[0])
       }
-      ctx.response.body = ret
     }else if (dt["client_publish"]){
       _sql = 'select * from ' + table_voucher + ' where publisher=?'
-      let ret = await allServices.query(_sql, dt["client_publish"])
-      ctx.response.body = ret
+      ret = await allServices.query(_sql, dt["client_publish"])
       //let _sql = 'select * from ' + table_
     }else if (dt["client"]){
       let _sql = 'select * from ' + table_client_enterprise + ' where client=?'
@@ -227,12 +222,17 @@ var getVoucherList = async (ctx, next) => {
         enterprises[lst[i]["enterprise"]] = true
       _sql = 'select * from ' + table_voucher
       let voucher = await allServices.query(_sql)
-      let ret = []
       for (let i in voucher)
         if (!enterprises[voucher[i]["publisher"]])
           ret.push(voucher[i])
-      ctx.response.body = ret
-    }
+    }else
+      rerturn
+  let tm = Date.now()
+  let act_ret = []
+  for (let i in ret)
+    if (new Date(ret[i]["end_time"]).getTime() >= tm)
+      act_ret.push(ret[i])
+  ctx.response.body = ret
 }
 
 var getSubscribedEnterprises = async (ctx, next) => {

@@ -33,7 +33,7 @@
   height: 22vw;
   float: left;
   text-align: center;
-  background-color: aliceblue;
+  background-color: rgb(240, 240, 255);
 }
 
 .head-btn{

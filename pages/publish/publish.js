@@ -21,6 +21,11 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
+  timeStamp2Date: function(aTime){
+    var date = new Date(aTime);
+    var dt = date.getFullYear() + "-" + (date.getMonth() < 10 ? '0' + (date.getMonth()+1) : (date.getMonth()+1)) + "-" + (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
+    return dt
+  },
   bindStartTimeChange: function(e){
     this.setData({start_time: e.detail.value})
   },
@@ -96,6 +101,11 @@ Page({
         start_time: detail["start_time"].split("T")[0],
         end_time: detail["end_time"].split("T")[0],
         image_source: app.globalData.server + "/" + detail["image"]
+      })
+    }else{
+      this.setData({
+        start_time: this.timeStamp2Date(Date.now()),
+        end_time: this.timeStamp2Date(Date.now() + 864000000)
       })
     }
     wx.clearStorageSync("voucher_detail")
