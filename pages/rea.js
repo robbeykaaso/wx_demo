@@ -130,7 +130,7 @@ class pipe{
   }
 
   nextB(aName, aParam){
-    this.nexts[aName] = aParam || {}
+    this.next(aName, aParam)
     return this
   }
 }
@@ -150,12 +150,27 @@ class pipeLocal extends pipe{
   }
 }
 
+class pipeDelegate extends pipe{
+  constructor(aName, aFunc, aDelegate){
+    super(aName, aFunc)
+    this.delegate = aDelegate
+  }
+  execute(aInput, aParam){
+    if (this.func)
+      this.func(aInput)
+  }
+  next(aName, aParam){
+    find(this.delegate).next(aName, aParam)
+  }
+}
+
 let find = (aName, aNeedFuture = true) => {
   let ret = pips[aName]
   if (!ret && aNeedFuture){
     let future_nm = aName + "_pipe_add"
     ret = pips[future_nm] || add(function(aInput){
-      pips[aName].nexts = pips[future_nm].nexts
+      for (let i in pips[future_nm].nexts)
+        pips[aName].next(i, pips[future_nm].nexts[i])
       delete pips[future_nm]
     }, {name: future_nm})
   }
@@ -167,6 +182,8 @@ let add = (aFunc, aPipeParam) => {
   if (aPipeParam){
     if (aPipeParam["type"] == "Local")
       pip = new pipeLocal(aPipeParam["name"])
+    else if (aPipeParam["type"] == "Delegate")
+      pip = new pipeDelegate(aPipeParam["name"], aFunc, aPipeParam["delegate"])
     else
       pip = new pipe(aPipeParam ? aPipeParam["name"] : "", aFunc, aPipeParam ? aPipeParam["replace"] : false)
   }
@@ -238,12 +255,25 @@ add(function(){
     console.log("test4_ success")
   })
 
-  run("test1", "hello") //normal next
-  run("test2", "hello") //specific pipe
-  run("test3", "hello") //pipeFuture
-  run("test4", "hello") //pipeLocal
-  run("test4_", "hello") 
-  //pipeDelegate
+  add(function(aInput){
+    console.log("test5 success")
+    aInput.out()
+  }, {name: "test5", type: "Delegate", delegate: "test5_"})
+  .nextF(function(aInput){
+    console.assert(aInput.data == "hello")
+    console.log("test5_ success")
+  })
+  add(function(aInput){
+    aInput.out()
+  }, {name: "test5_"})
+
+   run("test1", "hello") //normal next
+   run("test2", "hello") //specific pipe
+   run("test3", "hello") //pipeFuture
+   run("test4", "hello") //pipeLocal
+   run("test4_", "hello")
+   run("test5", "hello") //pipeDelegate
+   run("test5_", "hello") 
   //pipePartial
 }, {name: "unitTest"})
 
@@ -252,6 +282,7 @@ module.exports = {
   add,
   run,
   remove,
+  local,
   pipe,
   stream
 }
