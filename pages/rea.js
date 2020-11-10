@@ -72,37 +72,35 @@ class pipe{
       this.nexts = {}
   }
 
-  do(aInput, aParam){
-    if (this.func)
-      this.func(aInput)
+  doNext(aInput, aNexts){
     if (aInput.outs != null)
       if (aInput.outs.length == 0)
-        for (let i in this.nexts){
+        for (let i in aNexts){
           let pip = pips[i]
           if (pip)
-            pip.execute(aInput, aInput.param | this.nexts[i])
+            pip.execute(aInput, aInput.param | aNexts[i])
         }
       else
         for (let i in aInput.outs){
           let ot = aInput.outs[i]
           if (!ot[0]){
-            for (let i in this.nexts){
+            for (let i in aNexts){
               let pip = pips[i]
               if (pip && pip.anonymous)
-                pip.execute(ot[1], ot[1].param | this.nexts[i])
+                pip.execute(ot[1], ot[1].param | aNexts[i])
             }
           }else{
             let pip = pips[ot[0]]
-            if (this.nexts[ot[0]]){
+            if (aNexts[ot[0]]){
               if (pip)
-                pip.execute(ot[1], ot[1].param | this.nexts[ot[0]])
+                pip.execute(ot[1], ot[1].param | aNexts[ot[0]])
             }
             else{
               let exed = false
-              for (let j in this.nexts){
+              for (let j in aNexts){
                 let pip = pips[j]
                 if (pip && pip.local_name == ot[0]){
-                  pip.execute(ot[1], ot[1].param | this.nexts[j])
+                  pip.execute(ot[1], ot[1].param | aNexts[j])
                   exed = true
                 }
               }
@@ -116,6 +114,12 @@ class pipe{
         }
   }
 
+  do(aInput, aParam){
+    if (this.func)
+      this.func(aInput)
+    this.doNext(aInput, this.nexts)
+  }
+
   execute(aInput, aParam){
     this.do(aInput, aParam)
   }
@@ -124,14 +128,39 @@ class pipe{
     return this.next(add(aFunc, aPipeParam).name, aParam)
   }
 
+  nextFB(aFunc, aParam, aPipeParam){
+    this.nextF(aFunc, aParam, aPipeParam)
+    return this
+  }
+
   next(aName, aParam){
     this.nexts[aName] = aParam || {}
-    return pips[aName]
+    return find(aName)
   }
 
   nextB(aName, aParam){
     this.next(aName, aParam)
     return this
+  }
+
+  removeNext(aName){
+    delete this.next[aName]
+  }
+}
+
+class pipeFuture extends pipe{
+  constructor(aName, aFunc){
+    super(aName, aFunc)
+  }
+
+  next(aName, aParam){
+    if (!this.nexts2)
+      this.nexts2 = []
+    this.nexts2.push([aName, aParam])
+    return find(aName)
+  }
+  removeNext(aName){
+    console.assert(0)
   }
 }
 
@@ -162,6 +191,42 @@ class pipeDelegate extends pipe{
   next(aName, aParam){
     find(this.delegate).next(aName, aParam)
   }
+
+  removeNext(aName){
+    find(this.delegate).removeNext(aName)
+  }
+}
+
+class pipePartial extends pipe{
+  constructor(aName, aFunc, aReplace){
+    super(aName, aFunc, aReplace)
+    if (aReplace && pips[this.name])
+      this.nexts2 = pips[this.name].nexts2
+    else
+      this.nexts2 = {}
+  }
+  next(aName, aParam){
+    let tg = aParam["tag"]
+    if (!this.nexts2[tg])
+      this.nexts2[tg] = {}
+    this.nexts2[tg][aName] = aParam
+    return find(aName)
+  }
+
+  removeNext(aName){
+    for (let i in this.nexts2){
+      let nxt = this.nexts2[i]
+      delete nxt[aName]
+      this.nexts2[i] = nxt
+    }
+  }
+
+  do(aInput, aParam){
+    if (this.func)
+      this.func(aInput)
+    let prm = aInput.param || aParam
+    this.doNext(aInput, this.nexts2[prm["tag"]])
+  }
 }
 
 let find = (aName, aNeedFuture = true) => {
@@ -169,10 +234,12 @@ let find = (aName, aNeedFuture = true) => {
   if (!ret && aNeedFuture){
     let future_nm = aName + "_pipe_add"
     ret = pips[future_nm] || add(function(aInput){
-      for (let i in pips[future_nm].nexts)
-        pips[aName].next(i, pips[future_nm].nexts[i])
+      for (let i in pips[future_nm].nexts2){
+        let pr = pips[future_nm].nexts2[i]
+        pips[aName].next(pr[0], pr[1])
+      }
       delete pips[future_nm]
-    }, {name: future_nm})
+    }, {name: future_nm, type: "Future"})
   }
   return ret
 }
@@ -184,6 +251,10 @@ let add = (aFunc, aPipeParam) => {
       pip = new pipeLocal(aPipeParam["name"])
     else if (aPipeParam["type"] == "Delegate")
       pip = new pipeDelegate(aPipeParam["name"], aFunc, aPipeParam["delegate"])
+    else if (aPipeParam["type"] == "Partial")
+      pip = new pipePartial(aPipeParam ? aPipeParam["name"] : "", aFunc, aPipeParam ? aPipeParam["replace"] : false)
+    else if (aPipeParam["type"] == "Future")
+      pip = new pipeFuture(aPipeParam ? aPipeParam["name"] : console.assert(0), aFunc)
     else
       pip = new pipe(aPipeParam ? aPipeParam["name"] : "", aFunc, aPipeParam ? aPipeParam["replace"] : false)
   }
@@ -233,11 +304,11 @@ add(function(){
   }, {name: "test3"})
   add(function(aInput){
     console.assert(aInput.data == "hello")
-    console.log("test3_ success!")
+    console.log("test3 success!")
   }, {name: "test3_"})
   add(function(aInput){
     console.assert(aInput.data == "hello")
-    console.log("test3__ success!")
+    console.log("test3_ success!")
   }, {name: "test3__"})
 
   add(function(aInput){
@@ -267,14 +338,27 @@ add(function(){
     aInput.out()
   }, {name: "test5_"})
 
+  add(function(aInput){
+    aInput.out()
+  }, {name: "test6", type: "Partial"})
+  .nextFB(function(aInput){
+    console.assert(aInput.data == "hello")
+    console.log("test6 success")
+  }, {tag: "test6_"})
+  .nextFB(function(aInput){
+    console.assert(aInput.data == "hello")
+    console.log("test6_ success")
+  }, {tag: "test6__"})
+
    run("test1", "hello") //normal next
-   run("test2", "hello") //specific pipe
+   run("test2", "hello") //specific next
    run("test3", "hello") //pipeFuture
    run("test4", "hello") //pipeLocal
    run("test4_", "hello")
    run("test5", "hello") //pipeDelegate
    run("test5_", "hello") 
-  //pipePartial
+   run("test6", "hello", {tag: "test6_"}) //pipePartial
+   run("test6", "hello", {tag: "test6__"})
 }, {name: "unitTest"})
 
 module.exports = {
