@@ -327,37 +327,40 @@ add(function(){
   })
 
   add(function(aInput){
+    console.assert(aInput.data == "hello")
+    console.log("test5_ success")
+  }, {name: "test5__"})
+  add(function(aInput){
     console.log("test5 success")
     aInput.out()
   }, {name: "test5", type: "Delegate", delegate: "test5_"})
-  .nextF(function(aInput){
-    console.assert(aInput.data == "hello")
-    console.log("test5_ success")
-  })
+  find("test5")
+  .nextB("test5__", {tag: "s1"})
+  .nextB("test5__", {tag: "s2"})
   add(function(aInput){
     aInput.out()
-  }, {name: "test5_"})
+  }, {name: "test5_", type: "Partial"})
 
-  add(function(aInput){
-    aInput.out()
-  }, {name: "test6", type: "Partial"})
-  .nextFB(function(aInput){
+  find("test6").nextFB(function(aInput){
     console.assert(aInput.data == "hello")
     console.log("test6 success")
   }, {tag: "test6_"})
-  .nextFB(function(aInput){
+  find("test6").nextFB(function(aInput){
     console.assert(aInput.data == "hello")
     console.log("test6_ success")
   }, {tag: "test6__"})
+  add(function(aInput){
+    aInput.out()
+  }, {name: "test6", type: "Partial"})
 
    run("test1", "hello") //normal next
    run("test2", "hello") //specific next
    run("test3", "hello") //pipeFuture
    run("test4", "hello") //pipeLocal
    run("test4_", "hello")
-   run("test5", "hello") //pipeDelegate
-   run("test5_", "hello") 
-   run("test6", "hello", {tag: "test6_"}) //pipePartial
+   run("test5", "hello", {tag: "s1"}) //pipeFuture, pipeDelegate, pipePartial
+   run("test5_", "hello", {tag: "s2"}) 
+   run("test6", "hello", {tag: "test6_"}) //pipeFuture, pipePartial
    run("test6", "hello", {tag: "test6__"})
 }, {name: "unitTest"})
 

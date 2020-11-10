@@ -248,7 +248,7 @@ Page({
 
   },
   onLoad: function (options) {
-    pip.run("unitTest", {})
+    //pip.run("unitTest", {})
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {
         this.updateVoucherList()
