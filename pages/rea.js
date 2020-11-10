@@ -189,7 +189,7 @@ class pipeDelegate extends pipe{
       this.func(aInput)
   }
   next(aName, aParam){
-    find(this.delegate).next(aName, aParam)
+    return find(this.delegate).next(aName, aParam)
   }
 
   removeNext(aName){

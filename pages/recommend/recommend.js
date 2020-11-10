@@ -1,6 +1,4 @@
 // pages/recommend/recommend.js
-var pip = require("../rea.js")
-const { run } = require("../rea.js")
 const rea = require("../rea.js")
 
 const app = getApp()
@@ -182,6 +180,10 @@ Page({
       }
     })
     //get voucherlist recommended
+    rea.run("callServer", {url: "getVoucherList",
+                           data: {client_subscription: app.globalData.openid},
+                           tag: "updateVoucherList"})
+
     wx.request({
       url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
       data: {client_subscription: app.globalData.openid},
@@ -248,6 +250,17 @@ Page({
 
   },
   onLoad: function (options) {
+    rea.find("callServer")
+    .nextF(function(aInput){
+      //this.setData({"activities": res.data.data})
+      aInput.setData({url: "getVoucherList",
+                      data: {client: app.globalData.openid}}).out()
+    }, {tag: "updateVoucherList"})
+    .next(rea.local("callServer"))
+    .nextF(function(aInput){
+      console.log(aInput.data.data)
+    })
+
     //pip.run("unitTest", {})
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {

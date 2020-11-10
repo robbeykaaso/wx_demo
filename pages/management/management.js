@@ -295,8 +295,8 @@ Page({
         this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?" + app.globalData.server + "/verifyVoucherQRCode?" + "id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
 
         wx.connectSocket({
-          url: "wss://127.0.0.1:3000",
-          //url: "wss://www.robbeykaaso.work:3000",
+          //url: "wss://127.0.0.1:3000",
+          url: "wss://www.robbeykaaso.work:3000",
           success: res => {
 
           },
