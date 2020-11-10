@@ -180,9 +180,7 @@ Page({
       }
     })
     //get voucherlist recommended
-    rea.run("callServer", {url: "getVoucherList",
-                           data: {client_subscription: app.globalData.openid},
-                           tag: "updateVoucherList"})
+    rea.run("updateVoucherList", {})
 
     wx.request({
       url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
@@ -250,16 +248,21 @@ Page({
 
   },
   onLoad: function (options) {
-    rea.find("callServer")
+    /*rea.add(function(aInput){
+      aInput.setData({url: "getVoucherList",
+                      data: {client_subscription: app.globalData.openid}}).out()
+    }, {name: "updateVoucherList"})
+    .next(rea.local("callServer"))
     .nextF(function(aInput){
-      //this.setData({"activities": res.data.data})
+      console.log(aInput.data.data)
+      //this.setData({"activities": aInput.data.data})
       aInput.setData({url: "getVoucherList",
                       data: {client: app.globalData.openid}}).out()
     }, {tag: "updateVoucherList"})
     .next(rea.local("callServer"))
     .nextF(function(aInput){
       console.log(aInput.data.data)
-    })
+    })*/
 
     //pip.run("unitTest", {})
     if (!app.globalData.openid){
