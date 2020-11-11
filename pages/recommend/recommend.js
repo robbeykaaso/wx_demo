@@ -107,18 +107,7 @@ Page({
     this.setData({showReqResult: false})
   },
   subscribeEnterprise: function(){
-    wx.request({
-      url: app.globalData.server + "/addSubscription",
-      data: {client: app.globalData.openid,
-            enterprise: this.data.voucher_detail.publisher},
-      success: (res)=>{
-        if (res.data.err)
-          this.setData({showReqResult: true, reqMessage: res.data.msg})
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
+    rea.run("subscribeEnterprise", {})
   },
   bindDetailTap: function(e){
     wx.request({
@@ -159,78 +148,40 @@ Page({
     })
     
   },
-  updateVoucherList: function(){
-    //get user detail
-    wx.request({
-      url: app.globalData.server + "/getEnterpriseDetail",//'https://139.199.62.142:3000/',
-      data: {id: app.globalData.openid},
-      header:{
-
-      },
-      success: (res)=>{
-        if (res.data["err"])
-          app.globalData.isEnterprise = false
-        else{
-          app.globalData.isEnterprise = true
-          app.globalData.enterprise_detail = res.data
-        }   
-      },
-      fail: function(err){
-        app.globalData.isEnterprise = false
-      }
-    })
-    //get voucherlist recommended
-    rea.run("updateVoucherList", {})
-
-    //get voucherlist owned
-    wx.request({
-      url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
-      data: {"client_own": app.globalData.openid},
-      header:{
-        "Content-type": "application/json"
-      },
-      success: (res)=>{
-        app.globalData.voucher_own = res.data
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
-  },
   getUnionID: function(aRes){
 
   },
   onLoad: function (options) {
     let nm = "updateVoucherList"
     rea.add((aInput) => {
-      aInput.setData({url: "getVoucherList",
-                      data: {client_subscription: app.globalData.openid},
-                      tag: nm + "0"}).out()
+      aInput.setData(["getVoucherList",
+                      {client_subscription: app.globalData.openid},
+                      nm + "0"]).out()
     }, {name: nm})
     .next("callServer")
     .nextF((aInput) => {
       this.setData({"activities": aInput.data.data})
-      aInput.setData({url: "getVoucherList",
-                      data: {client: app.globalData.openid},
-                      tag: nm + "1"}).out()
+      aInput.setData(["getVoucherList",
+                      {client: app.globalData.openid},
+                      nm + "1"]).out()
     }, {tag: nm + "0"}, {name: nm + "0"})
     .next("callServer")
     .nextF((aInput) => {
-      var cnt = this.data.activities.length
+      let cnt = this.data.activities.length
       let dt = aInput.data.data
-      for (var i in dt)
+      for (let i in dt)
         if (dt[i].valid){
-          var tmp = "activities[" + cnt + "]"
+          let tmp = "activities[" + cnt + "]"
           this.setData({[tmp]: dt[i]})
           cnt++
         }
-      var entries = this.data.activities
-      var cnt0 = 0
-      var cnt = this.data.showindex
-      for (var i in entries){
+      let entries = this.data.activities
+      let cnt0 = 0
+      cnt = this.data.showindex
+      for (let i in entries){
         cnt = parseInt(i) + 1
         if (entries[i].valid){
-          var tmp = "activities_show[" + cnt0 + "]"
+          let tmp = "activities_show[" + cnt0 + "]"
           this.setData({[tmp]: entries[i]})
           cnt0++
           if (cnt0 > 5)
@@ -240,13 +191,73 @@ Page({
       this.setData({showindex: cnt})
     }, {tag: nm + "1"}, {name: nm + "1"})
 
+    let nm2 = "getEnterpriseDetail"
+    rea.add((aInput)=>{
+      app.globalData.isEnterprise = false
+      aInput.setData(["getEnterpriseDetail",
+                      {id: app.globalData.openid},
+                      nm2 + "0"]).out()
+    }, {name: nm2})
+    .next("callServer")
+    .nextF((aInput)=>{
+        app.globalData.isEnterprise = true
+        app.globalData.enterprise_detail = aInput.data.data
+    }, {tag: nm2 + "0"}, {name: nm2 + "0"})
+
+    let nm3 = "getOwnedVoucherList"
+    rea.add((aInput)=>{
+      aInput.setData(["getVoucherList",
+                      {client_own: app.globalData.openid},
+                      nm3 + "0"]).out()
+    }, {name: nm3})
+    .next("callServer")
+    .nextF((aInput)=>{
+      app.globalData.voucher_own = aInput.data.data
+    }, {tag: nm3 + "0"}, {name: nm3 + "0"})
+
+    let nm4 = "subscribeEnterprise"
+    rea.add((aInput)=>{
+      aInput.setData(["addSubscription",
+                      {client: app.globalData.openid,
+                       enterprise: this.data.voucher_detail.publisher},
+                       nm4 + "0"]).out()
+    }, {name: nm4})
+    .next("callServer")
+    .nextF((aInput)=>{
+      let dt = aInput.data
+      if (dt.data.err){
+        let msg_map = {"subscription exists": "已订阅"}
+        this.setData({showReqResult: true, reqMessage: msg_map[dt.data.msg]})
+      }
+      else
+        this.setData({showReqResult: true, reqMessage: "订阅成功"})
+    }, {tag: nm4 + "0"}, {name: nm4 + "0"})
+
+    let nm5 = "getVoucherDetail"
+    rea.add((aInput)=>{
+
+    }, {name: nm5})
+    .next("callServer")
+    .nextF((aInput)=>{
+
+    }, {tag: nm5 + "0"}, {name: nm5 + "0"})
+    .next("callServer")
+    .nextF((aInput)=>{
+
+    }, {tag: nm5 + "1"}, {name: nm5 + "1"})
+
     //pip.run("unitTest", {})
     if (!app.globalData.openid){
       app.userIDReadyCallback = res => {
-        this.updateVoucherList()
+        rea.run("getEnterpriseDetail", {})
+        rea.run("updateVoucherList", {})
+        rea.run("getOwnedVoucherList", {})
       }
-    }else
-      this.updateVoucherList()
+    }else{
+      rea.run("getEnterpriseDetail", {})
+      rea.run("updateVoucherList", {})
+      rea.run("getOwnedVoucherList", {})
+    }
   },
 
   /**
