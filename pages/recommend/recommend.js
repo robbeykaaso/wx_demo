@@ -182,53 +182,6 @@ Page({
     //get voucherlist recommended
     rea.run("updateVoucherList", {})
 
-    wx.request({
-      url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
-      data: {client_subscription: app.globalData.openid},
-      header:{
-        "Content-type": "application/json"
-      },
-      success: (res)=>{
-        this.setData({"activities": res.data})
-
-        wx.request({
-          url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
-          data: {client: app.globalData.openid},
-          header:{
-    
-          },
-          success: (res)=>{
-            var cnt = this.data.activities.length
-            for (var i in res.data)
-              if (res.data[i].valid){
-                var tmp = "activities[" + cnt + "]"
-                this.setData({[tmp]: res.data[i]})
-                cnt++
-              }
-            var entries = this.data.activities
-            var cnt0 = 0
-            var cnt = this.data.showindex
-            for (var i in entries){
-              cnt = parseInt(i) + 1
-              if (entries[i].valid){
-                var tmp = "activities_show[" + cnt0 + "]"
-                this.setData({[tmp]: entries[i]})
-                cnt0++
-                if (cnt0 > 5)
-                  break
-              }
-            }  
-            this.setData({showindex: cnt})
-          },
-          fail: function(err){
-            console.log("fail")
-          }
-        })
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
     //get voucherlist owned
     wx.request({
       url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
@@ -248,21 +201,44 @@ Page({
 
   },
   onLoad: function (options) {
-    /*rea.add(function(aInput){
+    let nm = "updateVoucherList"
+    rea.add((aInput) => {
       aInput.setData({url: "getVoucherList",
-                      data: {client_subscription: app.globalData.openid}}).out()
-    }, {name: "updateVoucherList"})
-    .next(rea.local("callServer"))
-    .nextF(function(aInput){
-      console.log(aInput.data.data)
-      //this.setData({"activities": aInput.data.data})
+                      data: {client_subscription: app.globalData.openid},
+                      tag: nm + "0"}).out()
+    }, {name: nm})
+    .next("callServer")
+    .nextF((aInput) => {
+      this.setData({"activities": aInput.data.data})
       aInput.setData({url: "getVoucherList",
-                      data: {client: app.globalData.openid}}).out()
-    }, {tag: "updateVoucherList"})
-    .next(rea.local("callServer"))
-    .nextF(function(aInput){
-      console.log(aInput.data.data)
-    })*/
+                      data: {client: app.globalData.openid},
+                      tag: nm + "1"}).out()
+    }, {tag: nm + "0"}, {name: nm + "0"})
+    .next("callServer")
+    .nextF((aInput) => {
+      var cnt = this.data.activities.length
+      let dt = aInput.data.data
+      for (var i in dt)
+        if (dt[i].valid){
+          var tmp = "activities[" + cnt + "]"
+          this.setData({[tmp]: dt[i]})
+          cnt++
+        }
+      var entries = this.data.activities
+      var cnt0 = 0
+      var cnt = this.data.showindex
+      for (var i in entries){
+        cnt = parseInt(i) + 1
+        if (entries[i].valid){
+          var tmp = "activities_show[" + cnt0 + "]"
+          this.setData({[tmp]: entries[i]})
+          cnt0++
+          if (cnt0 > 5)
+            break
+        }
+      }  
+      this.setData({showindex: cnt})
+    }, {tag: nm + "1"}, {name: nm + "1"})
 
     //pip.run("unitTest", {})
     if (!app.globalData.openid){
