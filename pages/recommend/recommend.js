@@ -1,3 +1,6 @@
+//领取卡券数量未更新
+//分页加载列表组件提取
+//扫码优化
 // pages/recommend/recommend.js
 const rea = require("../rea.js")
 
@@ -63,26 +66,7 @@ Page({
     }
   },
   receive: function(){
-    wx.request({
-      url: app.globalData.server + "/updateVoucherList",//'https://139.199.62.142:3000/',
-      data: {"client": app.globalData.openid,
-            "voucher": this.data.voucher_detail.id
-            },
-      header:{
-
-      },
-      success: (res)=>{
-        if (res.data["err"]){
-          this.setData({showReqResult: true, reqMessage: res.data.msg})
-        }else{
-          this.setData({"voucher_detail.own": true})
-          app.globalData.voucher_own.push(this.data.voucher_detail)
-        }
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
+    rea.run("receiveVoucher", {})
   },
   getScancode: function(){
     wx.scanCode({
@@ -110,43 +94,7 @@ Page({
     rea.run("subscribeEnterprise", {})
   },
   bindDetailTap: function(e){
-    wx.request({
-      url: app.globalData.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
-      data: {"id": this.data.activities[e.currentTarget.dataset.index].id},
-      header:{
-
-      },
-      success: (res)=>{
-        var detail = res.data
-        for (var i in app.globalData.voucher_own)
-          if (app.globalData.voucher_own[i].id == detail.id){
-            detail["own"] = true
-            break
-          }
-        this.setData({voucher_detail: detail, 
-                      voucherDetailImage: app.globalData.server + "/" + detail.image,
-                      voucherDetailStartTime: detail.start_time.split("T")[0],
-                      voucherDetailEndTime: detail.end_time.split("T")[0]})
-        wx.request({
-          url: app.globalData.server + "/getEnterpriseDetail",//'https://139.199.62.142:3000/',
-          data: {"id": res.data["publisher"]},
-          header:{
-    
-          },
-          success: (res)=>{
-            detail["publishername"] = res.data["name"]
-            this.setData({showVoucherDetail: true, voucher_detail: detail})
-          },
-          fail: function(err){
-            console.log("fail")
-          }
-        })
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
-    
+    rea.run("getVoucherDetail", e.currentTarget.dataset.index)    
   },
   getUnionID: function(aRes){
 
@@ -235,16 +183,47 @@ Page({
 
     let nm5 = "getVoucherDetail"
     rea.add((aInput)=>{
-
+      aInput.setData(["getVoucherDetail",
+                      {"id": this.data.activities[aInput.data].id},
+                       nm5 + "0"]).out()
     }, {name: nm5})
     .next("callServer")
     .nextF((aInput)=>{
-
+      let detail = aInput.data.data
+      for (let i in app.globalData.voucher_own)
+        if (app.globalData.voucher_own[i].id == detail.id){
+          detail["own"] = true
+          break
+        }
+      this.setData({voucher_detail: detail, 
+                    voucherDetailImage: app.globalData.server + "/" + detail.image,
+                    voucherDetailStartTime: detail.start_time.split("T")[0],
+                    voucherDetailEndTime: detail.end_time.split("T")[0]})
+      aInput.setData(["getEnterpriseDetail",
+                       {"id": aInput.data.data["publisher"]},
+                       nm5 + "1"]).out()  
     }, {tag: nm5 + "0"}, {name: nm5 + "0"})
     .next("callServer")
     .nextF((aInput)=>{
-
+      this.setData({showVoucherDetail: true, "voucher_detail.publishername": aInput.data.data["name"]})
     }, {tag: nm5 + "1"}, {name: nm5 + "1"})
+
+    let nm6 = "receiveVoucher"
+    rea.add((aInput)=>{
+      aInput.setData(["updateVoucherList",
+                      {"client": app.globalData.openid,
+                       "voucher": this.data.voucher_detail.id},
+                       nm6 + "0"]).out()
+    }, {name: nm6})
+    .next("callServer")
+    .nextF((aInput)=>{
+      if (aInput.data.data["err"]){
+        this.setData({showReqResult: true, reqMessage: aInput.data.data.msg})
+      }else{
+        this.setData({"voucher_detail.own": true})
+        app.globalData.voucher_own.push(this.data.voucher_detail)
+      }
+    }, {tag: nm6 + "0"}, {name: nm6 + "0"})
 
     //pip.run("unitTest", {})
     if (!app.globalData.openid){
