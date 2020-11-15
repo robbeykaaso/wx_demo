@@ -1,4 +1,5 @@
 // pages/management/management.js
+const tol = require("../tool.js")
 const app = getApp()
 
 Page({
@@ -51,7 +52,7 @@ Page({
     enterpriseVoucherDetailStartTime: "",
     enterpriseVoucherDetailEndTime: "",
     enterpriseVoucherDetailImage: "",
-    qrImage: app.globalData.server + "/getVoucherQRCode"
+    qrImage: tol.server + "/getVoucherQRCode"
   },
 
   /**
@@ -59,7 +60,7 @@ Page({
    */
    bindDetailTap: function(e){
     wx.request({
-      url: app.globalData.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
+      url: tol.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
       data: {"id": this.data.activities[e.currentTarget.dataset.index].id},
       header:{
 
@@ -72,7 +73,7 @@ Page({
             break
           }
         this.setData({enterprise_voucher_detail: detail, 
-                      enterpriseVoucherDetailImage: app.globalData.server + "/" + detail.image,
+                      enterpriseVoucherDetailImage: tol.server + "/" + detail.image,
                       enterpriseVoucherDetailStartTime: detail.start_time.split("T")[0],
                       enterpriseVoucherDetailEndTime: detail.end_time.split("T")[0],
                       showSubscribedEnterprise: false,
@@ -85,7 +86,7 @@ Page({
    },
    receive: function(){
     wx.request({
-      url: app.globalData.server + "/updateVoucherList",//'https://139.199.62.142:3000/',
+      url: tol.server + "/updateVoucherList",//'https://139.199.62.142:3000/',
       data: {"client": app.globalData.openid,
             "voucher": this.data.enterprise_voucher_detail.id
             },
@@ -113,7 +114,7 @@ Page({
    },
    updateEnterprises: function(){
     wx.request({
-      url: app.globalData.server + "/getSubscribedEnterprises",//'https://139.199.62.142:3000/',
+      url: tol.server + "/getSubscribedEnterprises",//'https://139.199.62.142:3000/',
       data: {"client": app.globalData.openid},
       header:{
         "Content-type": "application/json"
@@ -128,7 +129,7 @@ Page({
    },
    showSubscribedEnterprise: function(e){
     wx.request({
-      url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
+      url: tol.server + "/getVoucherList",//'https://139.199.62.142:3000/',
       data: {enterprise: e.currentTarget.dataset.index},
       header:{
         "Content-type": "application/json"
@@ -144,7 +145,7 @@ Page({
    },
    unsubscribeEnterprise: function(e){
     wx.request({
-      url: app.globalData.server + "/addSubscription",
+      url: tol.server + "/addSubscription",
       data: {enterprise: e.currentTarget.dataset.index,
              del: true},
       success: (res)=>{
@@ -175,7 +176,7 @@ Page({
      })
      if (e.target.dataset.current == 0){
       /*wx.request({
-        url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
+        url: tol.server + "/getVoucherList",//'https://139.199.62.142:3000/',
         data: {"client_own": app.globalData.openid},
         header:{
           "Content-type": "application/json"
@@ -192,7 +193,7 @@ Page({
        this.updateEnterprises()
      }else if (e.target.dataset.current == 2){
       wx.request({
-        url: app.globalData.server + "/getVoucherList",//'https://139.199.62.142:3000/',
+        url: tol.server + "/getVoucherList",//'https://139.199.62.142:3000/',
         data: {"client_publish": app.globalData.openid},
         header:{
           "Content-type": "application/json"
@@ -217,7 +218,7 @@ Page({
     dt["license_img"] = "license/" + app.globalData.openid + "/0" + pth0.substr(pth0.lastIndexOf("."), pth0.length)
     dt["leader_img"] = "leader/" + app.globalData.openid + "/0" + pth1.substr(pth1.lastIndexOf("."), pth1.length)
     wx.request({
-      url: app.globalData.server + "/addEnterprise",//'https://139.199.62.142:3000/',
+      url: tol.server + "/addEnterprise",//'https://139.199.62.142:3000/',
       data: dt,
       header:{
 
@@ -226,12 +227,12 @@ Page({
         wx.uploadFile({
           filePath: this.data.license_image,
           name: dt["license_img"], 
-          url: app.globalData.server + "/uploadImage"
+          url: tol.server + "/uploadImage"
         })
         wx.uploadFile({
           filePath: this.data.leader_image,
           name: dt["leader_img"], 
-          url: app.globalData.server + "/uploadImage"
+          url: tol.server + "/uploadImage"
         })
         app.globalData.isEnterprise = true
         app.globalData.enterprise_detail = dt
@@ -279,7 +280,7 @@ Page({
   },
   bindVoucherDetailTap: function(e){
     wx.request({
-      url: app.globalData.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
+      url: tol.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
       data: {"id": this.data.voucher_own[e.currentTarget.dataset.index].id},
       header:{
 
@@ -292,11 +293,10 @@ Page({
             break
           }
         this.setData({voucher_detail: res.data})
-        this.setData({showVoucherDetail: true, qrImage: app.globalData.server + "/getVoucherQRCode?" + app.globalData.server + "/verifyVoucherQRCode?" + "id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
+        this.setData({showVoucherDetail: true, qrImage: tol.server + "/getVoucherQRCode?" + tol.server + "/verifyVoucherQRCode?" + "id=" + res.data.id + "&" + "publisher=" + res.data.publisher + "&" + "client=" + app.globalData.openid})
 
         wx.connectSocket({
-          //url: "wss://127.0.0.1:3000",
-          url: "wss://www.robbeykaaso.work:3000",
+          url: "wss://" + tol.ip,
           success: res => {
 
           },
@@ -347,8 +347,8 @@ Page({
       userInfo: app.globalData.userInfo,
       isEnterprise: app.globalData.isEnterprise,
     enterprise_detail: app.globalData.enterprise_detail,
-    license_image:  app.globalData.server + "/" + app.globalData.enterprise_detail.license_img,
-    leader_image:  app.globalData.server + "/" + app.globalData.enterprise_detail.leader_img,
+    license_image:  tol.server + "/" + app.globalData.enterprise_detail.license_img,
+    leader_image:  tol.server + "/" + app.globalData.enterprise_detail.leader_img,
     voucher_own: app.globalData.voucher_own})
   },
 

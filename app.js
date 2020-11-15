@@ -1,10 +1,8 @@
 //app.js
-require("pages/tool.js")
+const tol = require("pages/tool.js")
 
 App({
   onLaunch: function () {
-    //this.globalData.server = "https://127.0.0.1:3000"
-    this.globalData.server = "https://www.robbeykaaso.work:3000"// "http://127.0.0.1:3000"
     // 展示本地存储能力
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
@@ -14,7 +12,7 @@ App({
     wx.login({
       success: res => {
         wx.request({
-          url: this.globalData.server + "/getOpenID",
+          url: tol.server + "/getOpenID",
           data: {code: res.code},
           header: {
             'content-type': 'json'
