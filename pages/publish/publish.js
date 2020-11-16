@@ -1,7 +1,7 @@
-//不能上传图片
 //内容审核
 // pages/publish/publish.js
 const tol = require("../tool.js")
+const rea = require("../rea.js")
 const app = getApp()
 
 Page({
@@ -25,8 +25,8 @@ Page({
    * 生命周期函数--监听页面加载
    */
   timeStamp2Date: function(aTime){
-    var date = new Date(aTime);
-    var dt = date.getFullYear() + "-" + (date.getMonth() < 10 ? '0' + (date.getMonth()+1) : (date.getMonth()+1)) + "-" + (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
+    let date = new Date(aTime);
+    let dt = date.getFullYear() + "-" + (date.getMonth() < 10 ? '0' + (date.getMonth()+1) : (date.getMonth()+1)) + "-" + (date.getDate() < 10 ? '0' + date.getDate() : date.getDate())
     return dt
   },
   bindStartTimeChange: function(e){
@@ -51,50 +51,49 @@ Page({
     this.setData({message: e.detail.value})
   },
   bindPublishTap: function() {
-    var pth = this.data.image_source
-    if (pth == "")
-      return
-    var idx = this.data.image_source.indexOf(tol.server)
-    if (idx >= 0){
-      pth = pth.substring(idx + tol.server.length + 1, pth.length)
-    }else
-      pth = "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length)
-    var dt = {
-      count: this.data.voucher_count,
-      voucher_type: this.data.used_type,
-      voucher_name: this.data.voucher_type[this.data.used_type - 1],
-      name: this.data.voucher_title,
-      valid: app.globalData.isEnterprise,
-      start_time: this.data.start_time + " 00:00:00",
-      end_time: this.data.end_time + " 23:59:59",
-      image: pth,
-      publisher: app.globalData.openid,
-      message: this.data.message
-    }
-    if (this.data.voucher_id != "")
-      dt["id"] = this.data.voucher_id
-    wx.request({
-      url: tol.server + "/updateVoucherDetail",
-      data: dt,
-      header:{
-        "Content-type": "application/json"
-      },
-      success: (res)=>{
-        console.log(this.data.image_source)
-        wx.uploadFile({
-          filePath: this.data.image_source,
-          name: res.data["path"], 
-          url: tol.server + "/uploadImage"
-        })
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
+    rea.run("publishVoucher", {})
   },
 
   onLoad: function (options) {
-    var detail = wx.getStorageSync("voucher_detail")
+    let nm = "publishVoucher"
+    rea.add((aInput) => {
+      let pth = this.data.image_source
+      if (pth == "")
+        return
+      let idx = this.data.image_source.indexOf(tol.server)
+      if (idx >= 0){
+        pth = pth.substring(idx + tol.server.length + 1, pth.length)
+      }else
+        pth = "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length)
+      let dt = {
+        count: this.data.voucher_count,
+        voucher_type: this.data.used_type,
+        voucher_name: this.data.voucher_type[this.data.used_type - 1],
+        name: this.data.voucher_title,
+        valid: app.globalData.isEnterprise,
+        start_time: this.data.start_time + " 00:00:00",
+        end_time: this.data.end_time + " 23:59:59",
+        image: pth,
+        publisher: app.globalData.openid,
+        message: this.data.message
+      }
+      if (this.data.voucher_id != "")
+        dt["id"] = this.data.voucher_id
+
+      aInput.setData(["updateVoucherDetail",
+                      dt,
+                      nm + "0"]).out()
+    }, {name: nm})
+    .next("callServer")
+    .nextF((aInput) => {
+      wx.uploadFile({
+        filePath: this.data.image_source,
+        name: aInput.data.data["path"], 
+        url: tol.server + "/uploadImage"
+      })
+    }, {tag: nm + "0"}, {name: nm + "0"})
+
+    let detail = wx.getStorageSync("voucher_detail")
     if (detail){
       this.setData({
         voucher_id: detail["id"],

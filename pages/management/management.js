@@ -342,15 +342,15 @@ Page({
     })
     
   },
-  onLoad: function (options) {
+  onLoad: function (options) {console.log(tol.server)
     this.setData({
       userInfo: app.globalData.userInfo,
       isEnterprise: app.globalData.isEnterprise,
-    enterprise_detail: app.globalData.enterprise_detail,
-    license_image:  tol.server + "/" + app.globalData.enterprise_detail.license_img,
-    leader_image:  tol.server + "/" + app.globalData.enterprise_detail.leader_img,
-    voucher_own: app.globalData.voucher_own})
-  },
+      enterprise_detail: app.globalData.enterprise_detail,
+      license_image:  tol.server + "/" + app.globalData.enterprise_detail.license_img,
+      leader_image:  tol.server + "/" + app.globalData.enterprise_detail.leader_img,
+      voucher_own: app.globalData.voucher_own})
+    },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
