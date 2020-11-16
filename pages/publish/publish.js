@@ -1,4 +1,7 @@
+//不能上传图片
+//内容审核
 // pages/publish/publish.js
+const tol = require("../tool.js")
 const app = getApp()
 
 Page({
@@ -51,9 +54,9 @@ Page({
     var pth = this.data.image_source
     if (pth == "")
       return
-    var idx = this.data.image_source.indexOf(app.globalData.server)
+    var idx = this.data.image_source.indexOf(tol.server)
     if (idx >= 0){
-      pth = pth.substring(idx + app.globalData.server.length + 1, pth.length)
+      pth = pth.substring(idx + tol.server.length + 1, pth.length)
     }else
       pth = "voucher/" + app.globalData.openid + "/" + pth.substr(pth.lastIndexOf("."), pth.length)
     var dt = {
@@ -71,16 +74,17 @@ Page({
     if (this.data.voucher_id != "")
       dt["id"] = this.data.voucher_id
     wx.request({
-      url: app.globalData.server + "/updateVoucherDetail",
+      url: tol.server + "/updateVoucherDetail",
       data: dt,
       header:{
         "Content-type": "application/json"
       },
       success: (res)=>{
+        console.log(this.data.image_source)
         wx.uploadFile({
           filePath: this.data.image_source,
           name: res.data["path"], 
-          url: app.globalData.server + "/uploadImage"
+          url: tol.server + "/uploadImage"
         })
       },
       fail: function(err){
@@ -100,7 +104,7 @@ Page({
         used_type: detail["voucher_type"],
         start_time: detail["start_time"].split("T")[0],
         end_time: detail["end_time"].split("T")[0],
-        image_source: app.globalData.server + "/" + detail["image"]
+        image_source: tol.server + "/" + detail["image"]
       })
     }else{
       this.setData({

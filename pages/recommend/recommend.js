@@ -1,8 +1,7 @@
-//领取卡券数量未更新
-//分页加载列表组件提取
-//扫码优化
+//领取卡券数量不能实时更新
 // pages/recommend/recommend.js
 const rea = require("../rea.js")
+const tol = require("../tool.js")
 
 const app = getApp()
 Page({
@@ -12,8 +11,6 @@ Page({
    */
   data: {
     activities: [],
-    activities_show: [],
-    showindex: 0,
     voucher_detail: {
       name: "world",
       message: "hello",
@@ -30,59 +27,17 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
+  validEntry: function(aIndex){
+    return this.data.activities[aIndex].valid
+  },
   lower: function(){
-    var cnt = this.data.showindex
-    var cnt0 = 0
-    var entries = this.data.activities
-    var new_show = []
-    for (var i = cnt; i < entries.length; ++i){
-      cnt = parseInt(i) + 1
-      if (entries[i].valid){
-        new_show.push(entries[i])
-        cnt0++
-      }
-      if (cnt0 > 5)
-        break
-    }
-    var showed = this.data.activities_show
-    this.setData({showindex: cnt})
-    if (cnt <= entries.length){
-      wx.showLoading({ //期间为了显示效果可以添加一个过度的弹出框提示“加载中”  
-        title: '加载中',
-        icon: 'loading',
-      });
-      setTimeout(() => {
-        this.setData({
-          activities_show: showed.concat(new_show)
-        });
-        wx.hideLoading();
-      }, 500)
-    }else{
-      wx.showToast({
-        title: "到底啦",
-        icon: "success",
-        duration: 500
-      })
-    }
+    tol.showPartialList(this, 5, "activities")
   },
   receive: function(){
     rea.run("receiveVoucher", {})
   },
   getScancode: function(){
-    wx.scanCode({
-      success: (res) => {
-        wx.request({
-          url: res.result,
-          data: {scanner: app.globalData.openid},
-          success: (res)=>{
-            this.setData({showReqResult: true, reqMessage: res.data.msg})
-          },
-          fail: function(err){
-            console.log("fail")
-          }
-        })
-      }
-    })
+    rea.run("scanCode", {})
   },
   close: function(){
     this.setData({showVoucherDetail: false, showReqResult: false})
@@ -123,20 +78,7 @@ Page({
           this.setData({[tmp]: dt[i]})
           cnt++
         }
-      let entries = this.data.activities
-      let cnt0 = 0
-      cnt = this.data.showindex
-      for (let i in entries){
-        cnt = parseInt(i) + 1
-        if (entries[i].valid){
-          let tmp = "activities_show[" + cnt0 + "]"
-          this.setData({[tmp]: entries[i]})
-          cnt0++
-          if (cnt0 > 5)
-            break
-        }
-      }  
-      this.setData({showindex: cnt})
+      tol.showPartialList(this, 5, "activities")
     }, {tag: nm + "1"}, {name: nm + "1"})
 
     let nm2 = "getEnterpriseDetail"
@@ -183,6 +125,7 @@ Page({
 
     let nm5 = "getVoucherDetail"
     rea.add((aInput)=>{
+      this.setData({voucher_detail_index: aInput.data})
       aInput.setData(["getVoucherDetail",
                       {"id": this.data.activities[aInput.data].id},
                        nm5 + "0"]).out()
@@ -196,7 +139,7 @@ Page({
           break
         }
       this.setData({voucher_detail: detail, 
-                    voucherDetailImage: app.globalData.server + "/" + detail.image,
+                    voucherDetailImage: tol.server + "/" + detail.image,
                     voucherDetailStartTime: detail.start_time.split("T")[0],
                     voucherDetailEndTime: detail.end_time.split("T")[0]})
       aInput.setData(["getEnterpriseDetail",
@@ -210,6 +153,10 @@ Page({
 
     let nm6 = "receiveVoucher"
     rea.add((aInput)=>{
+      /*let tmp = "activities[" + this.data.voucher_detail_index + "].count"
+      this.setData({[tmp]: this.data.voucher_detail.count - 1})
+      console.log(this.data.activities[this.data.voucher_detail_index].count)
+      return*/   
       aInput.setData(["updateVoucherList",
                       {"client": app.globalData.openid,
                        "voucher": this.data.voucher_detail.id},
@@ -224,6 +171,22 @@ Page({
         app.globalData.voucher_own.push(this.data.voucher_detail)
       }
     }, {tag: nm6 + "0"}, {name: nm6 + "0"})
+
+    let nm7 = "scanCode"
+    rea.add((aInput)=>{
+      aInput.setData(nm7 + "0").out()
+    }, {name: nm7})
+    .next("scanQRCode")
+    .nextF((aInput)=>{
+      let url = aInput.data.data
+      aInput.setData([url.substring(url.lastIndexOf("/") + 1, url.length),
+                      {scanner: app.globalData.openid},
+                       nm7 + "1"]).out()
+    }, {tag: nm7 + "0"}, {name: nm7 + "0"})
+    .next("callServer")
+    .nextF((aInput)=>{
+      this.setData({showReqResult: true, reqMessage: aInput.data.data.msg})
+    }, {tag: nm7 + "1"}, {name: nm7 + "1"})
 
     //pip.run("unitTest", {})
     if (!app.globalData.openid){
