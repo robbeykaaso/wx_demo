@@ -1,5 +1,6 @@
 // pages/management/management.js
 const tol = require("../tool.js")
+const rea = require("../rea.js")
 const app = getApp()
 
 Page({
@@ -59,52 +60,10 @@ Page({
    * 生命周期函数--监听页面加载
    */
    bindDetailTap: function(e){
-    wx.request({
-      url: tol.server + "/getVoucherDetail",//'https://139.199.62.142:3000/',
-      data: {"id": this.data.activities[e.currentTarget.dataset.index].id},
-      header:{
-
-      },
-      success: (res)=>{
-        var detail = res.data
-        for (var i in app.globalData.voucher_own)
-          if (app.globalData.voucher_own[i].id == detail.id){
-            detail["own"] = true
-            break
-          }
-        this.setData({enterprise_voucher_detail: detail, 
-                      enterpriseVoucherDetailImage: tol.server + "/" + detail.image,
-                      enterpriseVoucherDetailStartTime: detail.start_time.split("T")[0],
-                      enterpriseVoucherDetailEndTime: detail.end_time.split("T")[0],
-                      showSubscribedEnterprise: false,
-                      showSubscribedEnterpriseVoucher: true})
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
+     rea.run("getVoucherDetail2", e.currentTarget.dataset.index)
    },
    receive: function(){
-    wx.request({
-      url: tol.server + "/updateVoucherList",//'https://139.199.62.142:3000/',
-      data: {"client": app.globalData.openid,
-            "voucher": this.data.enterprise_voucher_detail.id
-            },
-      header:{
-
-      },
-      success: (res)=>{
-        if (res.data["err"]){
-          //this.setData({showReqResult: true, reqMessage: res.data.msg})
-        }else{
-          app.globalData.voucher_own.push(this.data.enterprise_voucher_detail)
-          this.setData({"enterprise_voucher_detail.own": true, voucher_own: app.globalData.voucher_own})
-        }
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
+     rea.run("receiveVoucher2", {})
   },
    licenseChanged: function(e){
     this.setData({license_image: e.detail})
@@ -112,49 +71,11 @@ Page({
    leaderChanged: function(e){
     this.setData({leader_image: e.detail})
    },
-   updateEnterprises: function(){
-    wx.request({
-      url: tol.server + "/getSubscribedEnterprises",//'https://139.199.62.142:3000/',
-      data: {"client": app.globalData.openid},
-      header:{
-        "Content-type": "application/json"
-      },
-      success: (res)=>{
-        this.setData({enterprises: res.data})
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
-   },
    showSubscribedEnterprise: function(e){
-    wx.request({
-      url: tol.server + "/getVoucherList",//'https://139.199.62.142:3000/',
-      data: {enterprise: e.currentTarget.dataset.index},
-      header:{
-        "Content-type": "application/json"
-      },
-      success: (res)=>{
-        this.setData({"activities": res.data})
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
-     this.setData({showSubscribedEnterpriseDetail: true})
+     rea.run("showSubscribedEnterpriseVouchers", e.currentTarget.dataset.index)
    },
    unsubscribeEnterprise: function(e){
-    wx.request({
-      url: tol.server + "/addSubscription",
-      data: {enterprise: e.currentTarget.dataset.index,
-             del: true},
-      success: (res)=>{
-        this.updateEnterprises()
-      },
-      fail: function(err){
-        console.log("fail")
-      }
-    })
+     rea.run("unsubscribeEnterprise", e.currentTarget.dataset.index)
    },
    clickChildTab: function (e) {
     if (this.data.currentChildTab === e.target.dataset.current) {
@@ -190,7 +111,7 @@ Page({
         }
       })*/
      }else if (e.target.dataset.current == 1){
-       this.updateEnterprises()
+       rea.run("updateSubscribedEnterprise", {})
      }else if (e.target.dataset.current == 2){
       wx.request({
         url: tol.server + "/getVoucherList",//'https://139.199.62.142:3000/',
@@ -343,6 +264,84 @@ Page({
     
   },
   onLoad: function (options) {console.log(tol.server)
+    let nm = "getVoucherDetail2"
+    rea.add((aInput) => {
+      aInput.setData(["getVoucherDetail",
+                      {"id": this.data.activities[aInput.data].id},
+                      nm + "0"]).out()
+    }, {name: nm})
+    .next("callServer")
+    .nextF((aInput) => {
+      let detail = aInput.data.data
+      for (let i in app.globalData.voucher_own)
+        if (app.globalData.voucher_own[i].id == detail.id){
+          detail["own"] = true
+          break
+        }
+      this.setData({enterprise_voucher_detail: detail, 
+                    enterpriseVoucherDetailImage: tol.server + "/" + detail.image,
+                    enterpriseVoucherDetailStartTime: detail.start_time.split("T")[0],
+                    enterpriseVoucherDetailEndTime: detail.end_time.split("T")[0],
+                    showSubscribedEnterprise: false,
+                    showSubscribedEnterpriseVoucher: true})
+    }, {tag: nm + "0"}, {name: nm + "0"})
+
+    let nm2 = "unsubscribeEnterprise"
+    let nm1 = "updateSubscribedEnterprise"
+    rea.add((aInput) => {
+      aInput.setData(["addSubscription",
+                      {enterprise: aInput.data,
+                      del: true},
+                      nm2 + "0"]).out()
+    }, {name: nm2})
+    .next("callServer")
+    .nextF((aInput) => {
+      aInput.setData(["getSubscribedEnterprises",
+                      {"client": app.globalData.openid},
+                      nm1 + "0"]).out()
+    }, {tag: nm2 + "0"}, {name: nm1})
+    .next("callServer")
+    .nextF((aInput) => {
+      this.setData({enterprises: aInput.data.data})
+    }, {tag: nm1 + "0"}, {name: nm1 + "0"})
+
+    let nm3 = "showSubscribedEnterpriseVouchers"
+    rea.add((aInput) => {
+      console.log("hi")
+      console.log(aInput.data)
+      aInput.setData(["getVoucherList",
+                      {enterprise: aInput.data},
+                      nm3 + "0"]).out()
+    }, {name: nm3})
+    .next("callServer")
+    .nextF((aInput) => {
+      this.setData({"activities": aInput.data.data})
+      this.setData({showSubscribedEnterpriseDetail: true})
+    }, {tag: nm3 + "0"}, {name: nm3 + "0"})
+
+    let nm6 = "receiveVoucher2"
+    rea.add((aInput)=>{
+      aInput.setData(["updateVoucherList",
+                      {"client": app.globalData.openid,
+                       "voucher": this.data.enterprise_voucher_detail.id},
+                       nm6 + "0"]).out()
+    }, {name: nm6})
+    .next("callServer")
+    .nextF((aInput)=>{
+      if (aInput.data.data["err"]){
+        this.setData({showReqResult: true, reqMessage: aInput.data.data.msg})
+      }else{
+        this.setData({"voucher_detail.own": true})
+        app.globalData.voucher_own.push(this.data.voucher_detail)
+      }
+      if (aInput.data.data["err"]){
+        //this.setData({showReqResult: true, reqMessage: aInput.data.data.msg})
+      }else{
+        app.globalData.voucher_own.push(this.data.enterprise_voucher_detail)
+        this.setData({"enterprise_voucher_detail.own": true, voucher_own: app.globalData.voucher_own})
+      }
+    }, {tag: nm6 + "0"}, {name: nm6 + "0"})
+
     this.setData({
       userInfo: app.globalData.userInfo,
       isEnterprise: app.globalData.isEnterprise,

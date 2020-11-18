@@ -1,6 +1,6 @@
 var rea = require("rea.js")
-//let ip = "www.robbeykaaso.work:3000"
-let ip = "localhost:3000"
+let ip = "www.robbeykaaso.work:3000"
+//let ip = "localhost:3000"
 let server = "https://" + ip
 
 //aThis: this
