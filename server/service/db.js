@@ -519,4 +519,4 @@ exp['GET ' + '/verifyVoucherQRCode'] = verifyVoucherQRCode
 exp['GET ' + '/getOpenID'] = getOpenID
 exp['POST ' + '/uploadImage'] = uploadImage
 
-module.exports = exp
+//module.exports = exp
