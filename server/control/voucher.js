@@ -1,3 +1,4 @@
+const Router = require("koa-router")
 const db = require("../service/db2")
 
 var addClient = async (ctx, next) => {
@@ -6,6 +7,7 @@ var addClient = async (ctx, next) => {
     
 }
 
-let exp = {};
-exp['GET ' + '/db2'] = addClient
-module.exports = exp
+const router = new Router()
+router.get("/db2", addClient)
+
+module.exports = router

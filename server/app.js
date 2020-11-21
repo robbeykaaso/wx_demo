@@ -11,13 +11,15 @@ const Koa = require('koa'),
 serve = require('koa-static')
 
 const ws = require('ws')
-
+const router = require("./control/index")
 const app = new Koa();
 
 app.use(serve(__dirname + "/images"))
-app.use(require('koa-body')({multipart: true}))
+   .use(require('koa-body')({multipart: true}))
+   .use(router.routes())
 
-app.use(require('./controller')(__dirname + '/control'))
+
+//app.use(require('./controller')(__dirname + '/control'))
 
 /*var server = https.createServer(options, app.callback()).listen(3000)
 
