@@ -17,7 +17,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: async function (options) {
+    wx.showLoading({ //期间为了显示效果可以添加一个过度的弹出框提示“加载中”  
+      title: '加载中',
+      icon: 'loading',
+    })
     var ret = await api.requestCoachList(options.beginCity, options.endCity)
+    wx.hideLoading()
     console.log(ret)
     //console.log(options.leaveDate)
     if (ret['status']){

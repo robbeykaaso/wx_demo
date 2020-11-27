@@ -14,12 +14,12 @@
  </view>
  </view>
  
- <view class="flex-box">
+ <!-- <view class="flex-box">
  <view class='flex-box-header'>出发日期</view>
  <picker mode="date" name='leaveDate' class='flex-box-content-pricker' value="{{date}}" start="2019-11-01" end="2021-10-30" bindchange="bindDateChange" >
  <view class='input-city'>{{date}}</view>
  </picker>
- </view>
+ </view> -->
  
  <view class="btn-area">
  <button formType="submit" class='btn-query'>查询</button>
