@@ -1,0 +1,13 @@
+    <view class="title">
+      {{beginCity}}->{{endCity}}
+    </view>
+    <view wx:if="errorMsg!=''" class='coach'>
+      <view class='coach-item' wx:for="{{resultList}}" wx:key="*this">
+        <view class='coach-title'>车型: {{item.bustype}}</view>
+        <view class='coach-profile'>发车时间: {{item.starttime}} / 起点: {{item.startstation}} / 终点: {{item.endstation}}</view>
+        <view class='coach-price'>
+          <text class='now'>￥ {{item.price}} / 剩余: {{item.ticket}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="error-msg">{{errorMsg}}</view>
