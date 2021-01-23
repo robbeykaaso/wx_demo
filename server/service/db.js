@@ -502,6 +502,14 @@ var getOpenID = async (ctx, next) => {
   ctx.response.body = ret 
 }
 
+const send = require("koa-send")
+var getFile = async (ctx, next) => {
+  const name = ctx.params.name
+  const path = `/download/${name}`;
+  ctx.attachment(path);
+  await send(ctx, path);
+}
+
 let exp = {};
 exp['GET ' + '/'] = get_index
 exp['GET ' + '/addClient'] = addClient
@@ -518,5 +526,6 @@ exp['GET ' + '/getVoucherQRCode'] = getVoucherQRCode
 exp['GET ' + '/verifyVoucherQRCode'] = verifyVoucherQRCode
 exp['GET ' + '/getOpenID'] = getOpenID
 exp['POST ' + '/uploadImage'] = uploadImage
+exp['GET ' + '/download/:name'] = getFile
 
 //module.exports = exp
