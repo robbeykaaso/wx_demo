@@ -528,4 +528,4 @@ exp['GET ' + '/getOpenID'] = getOpenID
 exp['POST ' + '/uploadImage'] = uploadImage
 exp['GET ' + '/download/:name'] = getFile
 
-//module.exports = exp
+module.exports = exp
