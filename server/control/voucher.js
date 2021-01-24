@@ -36,8 +36,17 @@ var getOpenID = async (ctx, next) => {
   ctx.response.body = ret 
 }
 
+const send = require("koa-send")
+var getFile = async (ctx, next) => {
+  const name = ctx.params.name
+  const path = `/download/${name}`;
+  ctx.attachment(path);
+  await send(ctx, path);
+}
+
 const router = new Router()
-router.get("/db2", addClient)
+//router.get("/db2", addClient)
 router.get("/openid", getOpenID)
+router.get("/download/:name", getFile)
 
 module.exports = router
