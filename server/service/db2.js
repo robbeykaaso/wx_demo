@@ -28,7 +28,7 @@ async function init(){
     await sequelize.sync()
 }
 
-init()
+//init()
 
 //对连接进行测试，查看控制台
 /* sequelize
