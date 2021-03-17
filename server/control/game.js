@@ -92,7 +92,7 @@ router.get("/start/:name", startGame)
     res: {
         err: 1,
         msg: ""
-    } || candidate_games
+    } || game_info
 */
 router.get("/update/:name/:game", updateGame)
 
