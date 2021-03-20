@@ -1,12 +1,17 @@
 //https://blog.csdn.net/tiramisu_ljh/article/details/78487747
 var iconv = require("iconv-lite")
+const Router = require("koa-router")
+const https=require("https")
+const fs = require("fs")
+
+//f81600042bf0d3713ea9015cdf661881
 
 var getOpenID = async (ctx, next) => {
   let dt = ctx.request.query
   let ret = await new Promise(
     function(resolve, reject){
-      https.get("https://api.weixin.qq.com/sns/jscode2session?appid=" + fs.readFileSync('../../' + dt.app_id + '/appid.txt') + 
-      "&secret=" + fs.readFileSync('../../' + dt.app_id + '/appsecret.txt') + '&js_code=' + dt.js_code + "&grant_type=authorization_code",
+      https.get("https://api.weixin.qq.com/sns/jscode2session?appid=" + fs.readFileSync('../../https/' + dt.app + '/appid.txt') + 
+      "&secret=" + fs.readFileSync('../../https/' + dt.app + '/appsecret.txt') + '&js_code=' + dt.code + "&grant_type=authorization_code",
       function(res){
        var datas = [];  
        var size = 0;  

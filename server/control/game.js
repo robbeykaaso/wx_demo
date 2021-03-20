@@ -2,7 +2,7 @@ const Router = require("koa-router")
 const { v4: uuidv4 } = require("uuid")
 
 var candidate_games = {
-    game_id1: {
+   /* game_id1: {
         player: {
             player_id1: {
 
@@ -14,7 +14,7 @@ var candidate_games = {
         ball: {
 
         }
-    }
+    }*/
 }
 
 var games = {
@@ -24,10 +24,11 @@ var games = {
 var startGame = async (ctx, next) => {
     const player = ctx.params.name
     const dt = ctx.request.query
-    const games = Object.keys(candidate_games)
-    if (games.length){
-        const game_id = games[0]
-        let game = candidate_games.shift()
+    const c_games = Object.keys(candidate_games)
+    if (c_games.length){
+        const game_id = c_games[0]
+        let game = candidate_games[game_id]
+        delete candidate_games[game_id]
         game.player[player] = dt[player]
         games[game_id] = game
         ctx.response.body = {
@@ -52,7 +53,7 @@ var updateGame = async (ctx, next) => {
     const player = ctx.params.name
     const game_id = ctx.params.game
     const dt = ctx.request.query
-    if (games[game_id])
+    if (!games[game_id])
         ctx.response.body = {
             err: 1,
             msg: "no this game"
