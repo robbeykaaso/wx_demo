@@ -14,3 +14,4 @@ $RECYCLE.BIN/
 node_modules/
 ./server/images/voucher
 ./server/node_modules
+./server/upload
