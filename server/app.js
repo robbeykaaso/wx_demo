@@ -17,6 +17,7 @@ const app = new Koa();
 app.use(serve(__dirname + "/images"))
    .use(serve(__dirname + "/public"))
    .use(require('koa-body')({multipart: true}))
+   .use(require('koa-views')(__dirname + '/view', {extension: 'ejs'}))
    .use(router.routes())
 
 
