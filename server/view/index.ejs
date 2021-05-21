@@ -6,20 +6,24 @@
 <style type="text/css">
 .div-inline{ 
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 }
 .columnone{
-    grid-row: 1 / 3
+    grid-row: 1 / 4
 }
 .columntwo{
-    grid-row: 1 / 3
+    grid-row: 1 / 4
 }
 .columnthree{
-    grid-row: 1 / 3
+    grid-row: 1 / 4
+}
+.btn{
+    width: 60px;
+    height: 30px;
 }
 </style>
 <body>
-    <h1>Index of <%= title %></h1>
+    <h1><%= title %></h1>
     <hr>
     <pre>
         <% items.forEach(function(item){%>
@@ -27,12 +31,26 @@
                 <a class="columnone" href=<%=item.href%>><%=item.title %></a>
                 <text class="columntwo"><%=item.time %></text>
                 <text class="columnthree"><%=item.size %></text>
+                <%if(isManager && item.title != "../") {%>
+                    <input class="btn" type="button" value="delete" onclick='deleteFile("<%=title%>", "<%=item.title%>")'>
+                <%}%>
             </div>
         <% }) %>
     </pre>
     <hr>
 </body>
 <script>
+    function deleteFile(aDir, aName){
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status === 200)
+                location.reload()
+        } 
+        var url = window.location.protocol + '//' + window.location.host + '/test/delete' + window.location.search + '&&dir=' + aDir + "&&name=" + aName
+        console.log(url)
+        xmlHttp.open("GET", url, true);
+        xmlHttp.send();
+    }
    // console.log(document.location.host)
 </script>
 </html>
