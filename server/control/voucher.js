@@ -93,9 +93,12 @@ const viewUpload = async (ctx, next) => {
     let files = fs.readdirSync(dir)
     let items = []
     const dir2 = rt + pth
+    let filters = {"book": true, "article": true}
     if (pth != "")
         items.push({title: "../", href: dir2 + (dir2.endsWith("/") ? "" : "/") + ".." + prm})
     for (let i in files){
+        if (dir == "upload/" && ctx.query['robbeykaaso'] != 'user' && filters[files[i]])
+            continue
         stats = fs.statSync(dir + "/" + files[i])
         let tm = stats.mtime.toString();
         tm = tm.substring(0, tm.indexOf('GMT') - 1)
