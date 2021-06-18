@@ -70,7 +70,7 @@ const deleteFile = async (ctx, next) => {
 }
 
 const viewUpload = async (ctx, next) => {
-    let pth = ctx.path
+    let pth = decodeURI(ctx.path)
     let prm = ctx.originalUrl.replace(ctx.path, "")
     let prt_rt = "/test"
     let rt = prt_rt + "/viewupload/"
