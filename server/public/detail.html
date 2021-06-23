@@ -1,0 +1,166 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+-->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Translater: a file management and editting tool</title>
+    <!-- Font-Awesome-Icons-CSS -->
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <!-- Template CSS Style link -->
+    <link rel="stylesheet" href="assets/css/style-starter.css">
+</head>
+
+<body>
+    <!--header-->
+    <header id="site-header" class="fixed-top">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg stroke">
+                <h1>
+                    <a class="navbar-brand d-flex align-items-center" href="index.html">
+                        <img src="assets/images/logo.png" alt="Translater" title="Translater" style="height:55px;" />
+                    Translater</a>
+                </h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="detail.html">Detail</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="test/viewupload/tools">Tools</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!--//header-->
+
+    <!-- inner banner -->
+    <div class="inner-banner">
+        <div class="w3l-breadcrumb">
+            <div class="container">
+                <div class="title-heading-w3 text-center mx-auto mb-5 pb-sm-4" style="max-width:600px">
+                    <h3 class="title-style">Supported features</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //inner banner -->
+
+    <!-- services section -->
+    <section class="w3l-bottom-grids-6 py-5" id="services">
+        <div class="container py-md-5 py-4">
+            <div class="row pt-md-4">
+                <div class="col-lg-4 col-md-6 grids-feature">
+                    <div class="area-box">
+                        <img class="img-fluid" src="assets/images/storage.png" alt=" ">
+                        <h4><a href="#feature" class="title-head">Storage manager</a></h4>
+                        <p>it provides friendly interactive operation for managing files on different 
+                            storage systems includes file system, amazon s3.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 grids-feature mt-md-0 mt-sm-5 mt-4">
+                    <div class="area-box">
+                        <img class="img-fluid" src="assets/images/visualization.png" alt=" ">
+                        <h4><a href="#feature" class="title-head">File Visualization</a></h4>
+                        <p>it supports many common files to be visualized, such as images, texts, 
+                            2D graphic, chart and so on. More files are still in developping.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 grids-feature mt-lg-0 mt-sm-5 mt-4">
+                    <div class="area-box">
+                        <img class="img-fluid" src="assets/images/editting.png" alt=" ">
+                        <h4><a href="#feature" class="title-head">File Editting</a></h4>
+                        <p>it permits user to edit the files from different ways easily and view 
+                            the effects instantly on different representation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- //services section -->
+    <h3 class="title-style text-center">Technique</h3>
+    <section class="w3l-bottom-grids-6 py-5" id="services">
+        <div class="container py-md-5 py-4">
+            <div class="row pt-md-4">
+                <div class="col-lg-4 col-md-6 grids-feature">
+                    <div class="area-box">
+                        <img class="img-fluid" src="assets/images/system.png" alt=" ">
+                        <h4><a href="#feature" class="title-head">System</a></h4>
+                        <p>it works only on windows now.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 grids-feature mt-md-0 mt-sm-5 mt-4">
+                    <div class="area-box">
+                        <img class="img-fluid" src="assets/images/format.png" alt=" ">
+                        <h4><a href="#feature" class="title-head">Formats</a></h4>
+                        <p>.bmp, .png, .jpg, .jpeg, .txt, .json, .xml, qsg, echart, labelme.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Js scripts -->
+
+    <!-- common jquery plugin -->
+    <script src="assets/js/jquery-3.3.1.min.js"></script>
+    <!-- //common jquery plugin -->
+
+    <!-- MENU-JS -->
+    <script>
+        $(window).on("scroll", function () {
+            var scroll = $(window).scrollTop();
+
+            if (scroll >= 80) {
+                $("#site-header").addClass("nav-fixed");
+            } else {
+                $("#site-header").removeClass("nav-fixed");
+            }
+        });
+
+        //Main navigation Active Class Add Remove
+        $(".navbar-toggler").on("click", function () {
+            $("header").toggleClass("active");
+        });
+        $(document).on("ready", function () {
+            if ($(window).width() > 991) {
+                $("header").removeClass("active");
+            }
+            $(window).on("resize", function () {
+                if ($(window).width() > 991) {
+                    $("header").removeClass("active");
+                }
+            });
+        });
+    </script>
+    <!-- //MENU-JS -->
+
+    <!-- disable body scroll which navbar is in active -->
+    <script>
+        $(function () {
+            $('.navbar-toggler').click(function () {
+                $('body').toggleClass('noscroll');
+            })
+        });
+    </script>
+    <!-- //disable body scroll which navbar is in active -->
+
+    <!--bootstrap-->
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!-- //bootstrap-->
+    <!-- //Js scripts -->
+</body>
+
+</html>

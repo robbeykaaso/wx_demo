@@ -1,0 +1,173 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+-->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Translater: a file management and editting tool</title>
+    <!-- Font-Awesome-Icons-CSS -->
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <!-- Template CSS Style link -->
+    <link rel="stylesheet" href="assets/css/style-starter.css">
+</head>
+
+<body>
+    <!--header-->
+    <header id="site-header" class="fixed-top">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg stroke">
+                <h1>
+                    <a class="navbar-brand d-flex align-items-center" href="index.html">
+                        <img src="assets/images/logo.png" alt="Translater" title="Translater" style="height:55px;" />
+                    Translater</a>
+                </h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-lg-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="detail.html">Detail</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="test/viewupload/tools">Tools</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!--//header-->
+
+    <!-- banner section -->
+    <section id="home" class="w3l-banner py-5">
+        <div class="banner-image">
+
+        </div>
+        <div class="banner-content">
+            <div class="container pt-5 pb-md-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-5 col-md-6 pt-md-0 pt-4">
+                        <h3 class="mb-sm-4 mb-3 title">Manage your file
+                            more <span class="d-block-res">E<span class="type-js"><span
+                                        class="text-js">asily!</span></span></span></h3>
+                        <p>make your files, models, scripts visible, editable and managable. we support
+                            image, text, 2D graphic, 3D graphic, video, chart and other common format files.
+                        </p>
+                        <div class="mt-md-5 mt-4 mb-lg-0 mb-4">
+                            <a class="btn btn-style" href="services.html">more detail...</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 banner-right mt-lg-4 mt-0 text-right offset-lg-1">
+                        <img class="img-fluid" src="assets/images/software.png" alt=" ">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- //banner section -->
+
+    <!-- common jquery plugin -->
+    <script src="assets/js/jquery-3.3.1.min.js"></script>
+    <!-- //common jquery plugin -->
+
+    <!-- banner image moving effect -->
+    <script>
+        var lFollowX = 0,
+            lFollowY = 0,
+            x = 0,
+            y = 0,
+            friction = 1 / 30;
+
+        function animate() {
+            x += (lFollowX - x) * friction;
+            y += (lFollowY - y) * friction;
+
+            translate = 'translate(' + x + 'px, ' + y + 'px) scale(1.1)';
+
+            $('.banner-image').css({
+                '-webit-transform': translate,
+                '-moz-transform': translate,
+                'transform': translate
+            });
+
+            window.requestAnimationFrame(animate);
+        }
+
+        $(window).on('mousemove click', function (e) {
+
+            var lMouseX = Math.max(-100, Math.min(100, $(window).width() / 2 - e.clientX));
+            var lMouseY = Math.max(-100, Math.min(100, $(window).height() / 2 - e.clientY));
+            lFollowX = (20 * lMouseX) / 100; // 100 : 12 = lMouxeX : lFollow
+            lFollowY = (10 * lMouseY) / 100;
+
+        });
+
+        animate();
+    </script>
+    <!-- //banner image moving effect -->
+
+    <!-- theme switch js (light and dark)-->
+    <script src="assets/js/theme-change.js"></script>
+    <script>
+        function autoType(elementClass, typingSpeed) {
+            var thhis = $(elementClass);
+            thhis.css({
+                "position": "relative",
+                "display": "inline-block"
+            });
+            thhis.prepend('<div class="cursor" style="right: initial; left:0;"></div>');
+            thhis = thhis.find(".text-js");
+            var text = thhis.text().trim().split('');
+            var amntOfChars = text.length;
+            var newString = "";
+            thhis.text("|");
+            setTimeout(function () {
+                thhis.css("opacity", 1);
+                thhis.prev().removeAttr("style");
+                thhis.text("");
+                for (var i = 0; i < amntOfChars; i++) {
+                    (function (i, char) {
+                        setTimeout(function () {
+                            newString += char;
+                            thhis.text(newString);
+                        }, i * typingSpeed);
+                    })(i + 1, text[i]);
+                }
+            }, 1500);
+        }
+
+        $(document).ready(function () {
+            // Now to start autoTyping just call the autoType function with the 
+            // class of outer div
+            // The second paramter is the speed between each letter is typed.   
+            autoType(".type-js", 200);
+        });
+    </script>
+    <!-- //theme switch js (light and dark)-->
+
+    <!-- disable body scroll which navbar is in active -->
+    <script>
+        $(function () {
+            $('.navbar-toggler').click(function () {
+                $('body').toggleClass('noscroll');
+            })
+        });
+    </script>
+    <!-- //disable body scroll which navbar is in active -->
+
+    <!--bootstrap-->
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!-- //bootstrap-->
+    <!-- //Js scripts -->
+</body>
+
+</html>

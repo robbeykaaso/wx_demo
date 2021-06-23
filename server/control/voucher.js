@@ -33,6 +33,35 @@ const saveFile = (file, path) => {
     })
 }
 
+const nodemailer = require("nodemailer")
+const postEmail = async(ctx, next) => {
+    const dt = ctx.request.body
+    
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+      host: "smtp.sina.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: "robbey_kaaso@sina.com", // generated ethereal user
+        pass: "81fd2cff31e24751", // generated ethereal password
+      },
+    });
+  
+    // send mail with defined transport object
+    //let sendTime = moment().format('MMMM Do YYYY, h:mm:ss a');
+    let info = await transporter.sendMail({
+      from: "robbey_kaaso@sina.com", // sender address
+      to: "robbey_kaaso@sina.com", // list of receivers
+      subject: dt.subject, // Subject line
+      html: "<p>" + dt.name + "</p>" + "<p>" + dt.sender + "</p>" + "<p>" + dt.message + "</p>", // html body
+    });
+
+    console.log("Message sent: %s", info.messageId);
+
+    ctx.redirect("../contact.html")
+}
+
 const upload_root = "upload"
 if (!fs.existsSync(upload_root))
     fs.mkdirSync(upload_root)
@@ -140,6 +169,7 @@ const router = new Router()
     }
 */
 router.get("/download/:name", getFile)
+router.post("/email", postEmail)
 router.post("/upload", uploadFile)
 router.get("/delete", deleteFile)
 router.get("/viewupload/*", viewUpload)
